@@ -1,4 +1,12 @@
+@font-face {
+    font-family: 'Ethnocentric';
+    src: url('@/assets/fonts/Ethnocentric-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @import "tailwindcss";
+
 @source "../src";
 @import "tw-animate-css";
 
@@ -123,6 +131,7 @@
     0% {
         transform: translate3d(0, 0, 0);
     }
+
     100% {
         transform: translate3d(-50%, 0, 0);
     }
@@ -132,6 +141,39 @@
     display: flex;
     width: max-content;
     will-change: transform;
-    animation: hero-marquee-scroll 20s linear infinite;
+    animation: hero-marquee-scroll 27s linear infinite;
     animation-delay: 1.4s;
+}
+
+/* Projector scanline sweep — vertical bar sweeps down the screen */
+@keyframes scanline-sweep {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.scanline-sweep {
+    animation: scanline-sweep 4s ease-in-out infinite;
+}
+
+/* Projector glitch flash — brief overlay flash on internship switch */
+@keyframes projector-glitch {
+    0%   { opacity: 0.5; }
+    50%  { opacity: 0.15; }
+    100% { opacity: 0; }
+}
+
+.projector-glitch {
+    animation: projector-glitch 0.12s ease-out forwards;
 }

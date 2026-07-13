@@ -1,16 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, memo } from "react";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import Internships from "@/components/internships/Internships";
 import portrait from "@/assets/portrait.png";
 import project1 from "@/assets/project-1.png";
 import project2 from "@/assets/image copy.png";
 import project3 from "@/assets/image.png";
 import certCharacter from "@/assets/cert-character.png";
-import cert1 from "@/assets/image copy 2.png";
-import cert2 from "@/assets/image copy 3.png";
-import cert3 from "@/assets/image copy 4.png";
-import cert4 from "@/assets/image copy 5.png";
-
+import cert_cs50 from "@/assets/CS50.png";
+import cert_nptel from "@/assets/nptel.png";
+import cert_infosys from "@/assets/infosys.png";
+import cert_nvidia from "@/assets/nvidia.png";
+import cert_data from "@/assets/tata.png";
+import cert_aws from "@/assets/aws.png";
+import cert_oracle from "@/assets/oracle.png";
+import cert_gets from "@/assets/gets.png";
+import cert_skill from "@/assets/skill.png";
 export const Route = createFileRoute("/")({
     component: Home,
 });
@@ -121,12 +126,13 @@ const Hero = memo(function Hero() {
                                     fontSize: "clamp(80px, 14vw, 220px)",
                                     color: "#ffffff",
                                     whiteSpace: "nowrap",
-                                    letterSpacing: "-0.02em",
+                                    letterSpacing: "0.05em",
                                     lineHeight: 1,
                                     paddingRight: "1em",
+                                    fontFamily: "'Ethnocentric', sans-serif",
                                 }}
                             >
-                                Vamaharsha Mahadeva
+                                VAMAHARSHA MAHADEVA వామహర్ష మహాదేవ वामहर्ष महादेव
                             </span>
                         ))}
                     </div>
@@ -137,7 +143,7 @@ const Hero = memo(function Hero() {
             <div className="absolute left-8 bottom-24 z-30 font-mono text-[12px] space-y-1.5">
                 {[
                     ["in", "Linkedin"],
-                    ["X", "Twitter"],
+                    ["G", "Github"],
                     ["ig", "Instagram"],
                 ].map(([k, l]) => (
                     <a key={l} href="#" className="flex items-center gap-3 hover:text-[#ff3d2e] transition-colors">
@@ -313,80 +319,8 @@ function Projects() {
     );
 }
 
-/* ---------- TESTIMONIALS ---------- */
-
-const QUOTES = [
-    {
-        text: ["His keen eye for detail and innovative approach", "impressed our team, turning challenges into creative", "solutions that set him apart."],
-        name: "Dr. R. Sai Kiran",
-        role: "Faculty Mentor, SVEC",
-    },
-    {
-        text: ["Harsha shipped the ML pipeline two weeks ahead of", "schedule and the model still beats the baseline. Rare", "combination of speed and rigor."],
-        name: "Aarav Mehta",
-        role: "Lead Engineer, Ethara AI",
-    },
-    {
-        text: ["The RF filter design was elegant — clean math, clean", "layout, and the measured response matched simulation", "almost perfectly. Strong researcher."],
-        name: "Prof. Lakshmi Devi",
-        role: "ECE Department, SVEC",
-    },
-];
-
-function Testimonials() {
-    const [i, setI] = useState(0);
-    useEffect(() => {
-        const t = setInterval(() => setI((p) => (p + 1) % QUOTES.length), 5000);
-        return () => clearInterval(t);
-    }, []);
-    const q = QUOTES[i];
-
-    return (
-        <section className="bg-[#0a0a0a] text-[#f5f5f5] hairline-b-dark">
-            <div className="mx-auto max-w-[1400px] px-8 py-6 hairline-b-dark">
-                <SectionLabel>Testimonials</SectionLabel>
-            </div>
-            <div className="mx-auto max-w-[1400px] px-8 py-24 grid md:grid-cols-[1fr_auto] gap-12 items-center">
-                <div>
-                    <div className="font-mono text-[11px] text-[#6b6b6b] mb-6">
-                        <span className="text-[#ff3d2e]">0{i + 1}</span> / 0{QUOTES.length}
-                    </div>
-                    <AnimatePresence mode="wait">
-                        <motion.blockquote
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                            className="text-display text-[#f5f5f5] max-w-[900px]"
-                            style={{ fontSize: "clamp(28px, 3.4vw, 48px)", lineHeight: 1.15, letterSpacing: "-0.02em" }}
-                        >
-                            <span className="text-[#f5f5f5]">"{q.text[0]} </span>
-                            <span className="text-[#ff3d2e]">{q.text[1]} {q.text[2]}"</span>
-                        </motion.blockquote>
-                    </AnimatePresence>
-                    <div className="mt-10 font-mono text-[12px]">
-                        <p className="text-[#f5f5f5]">// {q.name}</p>
-                        <p className="text-[#6b6b6b] mt-1">{q.role}</p>
-                    </div>
-                </div>
-
-                <div className="flex md:flex-col gap-3">
-                    {QUOTES.map((_, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => setI(idx)}
-                            className={`w-12 h-12 rounded-full border flex items-center justify-center text-[10px] font-mono transition-all ${idx === i ? "border-[#ff3d2e] text-[#ff3d2e] scale-110" : "border-[#1f1f1f] text-[#6b6b6b]"
-                                }`}
-                        >
-                            0{idx + 1}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
+/* ---------- INTERNSHIPS ---------- */
+// The Internships section is imported from @/components/internships/Internships
 
 /* ---------- ABOUT ---------- */
 
@@ -496,66 +430,277 @@ function Contact() {
 
 const CERTS = [
     {
-        id: "tf",
-        name: "TensorFlow Developer Certificate",
-        issuer: "Google",
-        date: "March 2024",
-        credential: "TF-2024-HARSHA-001",
-        category: "AI / ML",
-        color: "#ff6b00",
-        description:
-            "Proficiency in building and training neural networks using TensorFlow for real-world ML applications.",
-        image: cert1,
-    },
-    {
-        id: "emb",
-        name: "Embedded Systems Internship",
-        issuer: "Ethara AI",
-        date: "June 2024",
-        credential: "ETHARA-INT-2024",
-        category: "Embedded / IoT",
-        color: "#00ff88",
-        description:
-            "Advanced internship in embedded systems design, firmware development, and hardware-software co-design.",
-        image: cert2,
-    },
-    {
-        id: "react",
-        name: "React Developer Certification",
-        issuer: "Meta / Coursera",
-        date: "January 2024",
-        credential: "META-REACT-2024",
-        category: "Frontend",
-        color: "#61dafb",
-        description:
-            "Advanced React — hooks, context, performance optimization, and modern composition patterns.",
-        image: cert3,
-    },
-    {
-        id: "ieee",
-        name: "IEEE Paper Publication",
-        issuer: "IEEE Xplore",
+        id: "cs50",
+        name: "CS50x Certificate",
+        issuer: "Harvard University",
         date: "2025",
-        credential: "IEEE-DOI-10.1109/XX",
-        category: "Research",
-        color: "#ffd700",
+        credential: "e995b9b7-b605-48bd-a454-b82086a7be24",
+        credentialLink: "https://certificates.cs50.io/e995b9b7-b605-48bd-a454-b82086a7be24.pdf?size=letter",
+        category: "Computer Science",
+        color: "#a51c30",
         description:
-            "Published research on HM-SIW bandpass filter design optimization using ANN and Grey Wolf Optimizer.",
-        image: cert4,
+            "Completion of CS50x including ten problem sets and one final project. Awarded by Harvard University, Cambridge, Massachusetts.",
+        image: cert_cs50,
     },
     {
-        id: "py",
-        name: "Python for Data Science",
-        issuer: "IBM / Coursera",
-        date: "November 2023",
-        credential: "IBM-PY-DS-2023",
-        category: "Data Science",
-        color: "#a855f7",
+        id: "nptel",
+        name: "Introduction to Internet of Things",
+        issuer: "NPTEL — IIT Kharagpur",
+        date: "Jul–Oct 2025",
+        credential: "NPTEL25CS147S769600083",
+        credentialLink: "",
+        category: "Embedded / IoT",
+        color: "#00aaff",
         description:
-            "Comprehensive Python for data analysis, visualization, and end-to-end machine learning pipelines.",
-        image: cert1,
+            "Elite certification for successfully completing the 12-week IoT course with a consolidated score of 78%. Funded by MoE, Govt. of India.",
+        image: cert_nptel,
+    },
+    {
+        id: "infosys",
+        name: "Prompt Engineering",
+        issuer: "Infosys Springboard",
+        date: "September 7, 2025",
+        credential: "Infosys-PE-2025",
+        credentialLink: "",
+        category: "AI / LLM",
+        color: "#007cc2",
+        description:
+            "Course completion certificate for Prompt Engineering awarded by Infosys Springboard.",
+        image: cert_infosys,
+    },
+    {
+        id: "nvidia",
+        name: "Building LLM Applications With Prompt Engineering",
+        issuer: "NVIDIA",
+        date: "September 14, 2025",
+        credential: "Nx9IZW8fSBuFh97VbFVo4Q",
+        credentialLink: "",
+        category: "AI / ML",
+        color: "#76b900",
+        description:
+            "Certificate of Competency for demonstrating competence in building LLM applications with prompt engineering. Signed by Greg Estes, VP NVIDIA.",
+        image: cert_nvidia,
+    },
+    {
+        id: "tata",
+        name: "GenAI Powered Data Analytics Job Simulation",
+        issuer: "TATA — Forage",
+        date: "August 23, 2025",
+        credential: "Rf9d2qjvrfd2BRWKP",
+        credentialLink: "https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/ifobHAoMjQs9s6bKS/gMTdCXwDdLYoXZ3wG_ifobHAoMjQs9s6bKS_mKW9YuePmj5M3pHbu_1755957372781_completion_certificate.pdf",
+        category: "Data Science",
+        color: "#1a5ca8",
+        description:
+            "Completed practical tasks in exploratory data analysis, risk profiling, predicting delinquency with AI, and implementing AI-driven collections strategy.",
+        image: cert_data,
+    },
+    {
+        id: "aws",
+        name: "Foundations of Prompt Engineering",
+        issuer: "Amazon Web Services",
+        date: "August 12, 2025",
+        credential: "AWS-PE-MAHADEVA-2025",
+        credentialLink: "",
+        category: "Cloud / AI",
+        color: "#ff9900",
+        description:
+            "AWS Training & Certification completion certificate for Foundations of Prompt Engineering.",
+        image: cert_aws,
+    },
+    {
+        id: "oracle",
+        name: "Oracle Fusion Cloud HCM Process Essentials",
+        issuer: "Oracle University",
+        date: "June 25, 2025",
+        credential: "Oracle-HCM-Essentials-Rel1",
+        credentialLink: "",
+        category: "Cloud / ERP",
+        color: "#f80000",
+        description:
+            "Oracle Certified — Certificate of Recognition for Oracle Fusion Cloud Applications HCM Process Essentials Certified - Rel 1.",
+        image: cert_oracle,
+    },
+    {
+        id: "gets",
+        name: "GETS Higher English Test",
+        issuer: "GETS — QAI",
+        date: "September 20, 2023",
+        credential: "GHE23004411IN00800672",
+        credentialLink: "",
+        category: "Language",
+        color: "#f5a800",
+        description:
+            "CEFR B2 level English proficiency. Overall 72%, GETS Score 79, GETS Level 6. Assessed by UK NARIC against the Common European Framework of Reference.",
+        image: cert_gets,
+    },
+    {
+        id: "skill",
+        name: "Job Skills Online Course",
+        issuer: "CSC — Skill India / NSDC",
+        date: "January–July 2023",
+        credential: "CSC-SKILL-MAHADEVA-2023",
+        credentialLink: "",
+        category: "Skill Development",
+        color: "#0066cc",
+        description:
+            "Course Completion Certificate for Job Skills online course. Certified by CSC e-Governance Services India Limited and National Skill Development Corporation.",
+        image: cert_skill,
     },
 ];
+
+const getCertificateIcon = (id: string, color: string) => {
+    switch (id) {
+        case "tf": // TensorFlow / Google (Neural Net / AI)
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <circle cx="12" cy="5" r="2" fill={`${color}20`} />
+                    <circle cx="6" cy="14" r="2" fill={`${color}20`} />
+                    <circle cx="18" cy="14" r="2" fill={`${color}20`} />
+                    <line x1="12" y1="7" x2="6.5" y2="12" stroke={color} strokeWidth="1.5" />
+                    <line x1="12" y1="7" x2="17.5" y2="12" stroke={color} strokeWidth="1.5" />
+                    <line x1="8" y1="14" x2="16" y2="14" stroke={color} strokeWidth="1.5" />
+                </svg>
+            );
+        case "emb": // Embedded Systems / IoT (Chip / CPU)
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <rect x="5" y="5" width="14" height="14" rx="1" fill={`${color}20`} />
+                    <line x1="9" y1="2" x2="9" y2="5" stroke={color} strokeWidth="1.5" />
+                    <line x1="15" y1="2" x2="15" y2="5" stroke={color} strokeWidth="1.5" />
+                    <line x1="9" y1="19" x2="9" y2="22" stroke={color} strokeWidth="1.5" />
+                    <line x1="15" y1="19" x2="15" y2="22" stroke={color} strokeWidth="1.5" />
+                    <line x1="2" y1="9" x2="5" y2="9" stroke={color} strokeWidth="1.5" />
+                    <line x1="2" y1="15" x2="5" y2="15" stroke={color} strokeWidth="1.5" />
+                    <line x1="19" y1="9" x2="22" y2="9" stroke={color} strokeWidth="1.5" />
+                    <line x1="19" y1="15" x2="22" y2="15" stroke={color} strokeWidth="1.5" />
+                    <rect x="9" y="9" width="6" height="6" rx="0.5" stroke={color} fill="none" />
+                </svg>
+            );
+        case "react": // React Developer (Atom symbol)
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <ellipse cx="12" cy="12" rx="10" ry="3" transform="rotate(30 12 12)" />
+                    <ellipse cx="12" cy="12" rx="10" ry="3" transform="rotate(90 12 12)" />
+                    <ellipse cx="12" cy="12" rx="10" ry="3" transform="rotate(150 12 12)" />
+                    <circle cx="12" cy="12" r="1.5" fill={color} />
+                </svg>
+            );
+        case "ieee": // IEEE Research (Academic Book/Scroll)
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill={`${color}10`} />
+                    <path d="M8 14H16M8 10H16M8 7H13" stroke={color} strokeLinecap="round" />
+                    <rect x="6" y="4" width="12" height="16" rx="1" stroke={color} fill="none" />
+                </svg>
+            );
+        case "py": // Python for Data Science (Data/Graph/Python snake representation)
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <path d="M3 3V21H21" stroke={color} strokeLinecap="round" />
+                    <path d="M7 16L11 11L15 13L20 7" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="7" cy="16" r="1" fill={color} />
+                    <circle cx="11" cy="11" r="1" fill={color} />
+                    <circle cx="15" cy="13" r="1" fill={color} />
+                    <circle cx="20" cy="7" r="1" fill={color} />
+                </svg>
+            );
+        default:
+            return (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+                    <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" fill={`${color}10`} />
+                </svg>
+            );
+    }
+};
+
+const CertificateCard = ({ cert }: { cert: typeof CERTS[0] }) => {
+    const c = cert.color;
+    return (
+        <div
+            className="w-full h-full p-[3%] flex flex-col justify-between text-left select-none relative overflow-hidden bg-[#0d0d0f] border border-[#2c2c2f]"
+            style={{
+                fontFamily: '"Inter", sans-serif',
+                boxShadow: `inset 0 0 20px ${c}15`,
+            }}
+        >
+            {/* Elegant grid background pattern */}
+            <div
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+                    backgroundSize: "6% 6%",
+                }}
+            />
+            {/* Corner decorations */}
+            <div className="absolute top-1 left-1 w-1.5 h-1.5 border-t border-l border-white/20" />
+            <div className="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-white/20" />
+            <div className="absolute bottom-1 left-1 w-1.5 h-1.5 border-b border-l border-white/20" />
+            <div className="absolute bottom-1 right-1 w-1.5 h-1.5 border-b border-r border-white/20" />
+
+            <div className="flex items-center gap-3 h-full z-10">
+                {/* Visual Seal / Badge container */}
+                <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border relative"
+                    style={{
+                        borderColor: `${c}40`,
+                        background: `radial-gradient(circle, ${c}18 0%, transparent 80%)`,
+                        boxShadow: `0 0 10px ${c}20`
+                    }}
+                >
+                    {getCertificateIcon(cert.id, c)}
+                    {/* Tiny seal ribbon simulation */}
+                    <div className="absolute -bottom-1.5 w-3 h-3 flex justify-between gap-[2px]">
+                        <div className="w-[3px] h-[6px]" style={{ backgroundColor: c, transform: 'rotate(15deg)', opacity: 0.8 }} />
+                        <div className="w-[3px] h-[6px]" style={{ backgroundColor: c, transform: 'rotate(-15deg)', opacity: 0.8 }} />
+                    </div>
+                </div>
+
+                {/* Main info panel */}
+                <div className="flex-1 min-w-0 flex flex-col justify-center h-full">
+                    {/* Top line: Issuer & Date */}
+                    <div className="flex justify-between items-center w-full">
+                        <span className="text-[5px] tracking-[0.25em] font-mono font-bold uppercase text-[#88888b]">
+                            {cert.issuer}
+                        </span>
+                        <span className="text-[4px] font-mono text-[#5a5a5f] font-medium">
+                            {cert.date}
+                        </span>
+                    </div>
+
+                    {/* Middle: Certificate Name */}
+                    <h4
+                        className="text-[7.5px] md:text-[8.5px] font-black tracking-tight text-white mt-0.5 leading-tight truncate uppercase"
+                        style={{ fontFamily: '"Archivo", sans-serif', letterSpacing: "-0.01em" }}
+                    >
+                        {cert.name}
+                    </h4>
+
+                    {/* Recipient Line */}
+                    <p className="text-[5.5px] md:text-[6.5px] font-medium italic mt-0.5 text-[#a0a0a5]">
+                        Awarded to: <span className="font-bold not-italic" style={{ color: c }}>Vamaharsha Mahadeva</span>
+                    </p>
+
+                    {/* Bottom strip: ID & category */}
+                    <div className="mt-1 flex justify-between items-center w-full border-t border-white/5 pt-0.5">
+                        <span className="text-[4.5px] font-mono text-[#5a5a5f] tracking-widest font-semibold uppercase">
+                            ID: {cert.credential}
+                        </span>
+                        <span
+                            className="text-[4px] font-mono font-bold uppercase px-1 py-[0.5px] rounded-[1px]"
+                            style={{
+                                color: c,
+                                backgroundColor: `${c}15`,
+                                border: `1px solid ${c}25`
+                            }}
+                        >
+                            {cert.category}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 function Certificates() {
     const [active, setActive] = useState(0);
@@ -690,51 +835,55 @@ function Certificates() {
                                 transition={{ duration: 0.6 }}
                             />
 
-                            {/* certificate overlay INSIDE frame, behind character image */}
-                            <div
-                                className="absolute pointer-events-none overflow-hidden rounded-[2px]"
-                                style={{
-                                    top: "34.2%",
-                                    left: "29.8%",
-                                    width: "42.5%",
-                                    height: "15.3%",
-                                    zIndex: 1,
-                                    boxShadow: `0 0 30px ${c}77`,
-                                }}
-                            >
-                                <AnimatePresence mode="wait">
-                                    <motion.img
-                                        key={cert.id}
-                                        src={cert.image}
-                                        alt={cert.name}
-                                        loading="lazy"
-                                        initial={{ opacity: 0, scale: 1.05 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.98 }}
-                                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
-                                </AnimatePresence>
-                                <div
-                                    className="absolute inset-0"
-                                    style={{
-                                        background: `linear-gradient(180deg, ${c}10, transparent 30%, transparent 70%, ${c}20)`,
-                                    }}
-                                />
-                            </div>
-
-                            {/* character on top */}
-                            <motion.img
-                                src={certCharacter}
-                                alt="Harsha holding a certificate"
-                                loading="lazy"
-                                width={1024}
-                                height={1536}
-                                className="relative z-10 w-full h-full object-contain select-none pointer-events-none"
-                                style={{ filter: `drop-shadow(0 24px 40px ${c}55)` }}
+                            {/* Floating wrapper — keeps cert overlay & character in sync */}
+                            <motion.div
+                                className="relative w-full h-full"
                                 animate={{ y: [0, -6, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            />
+                            >
+                                {/* certificate overlay INSIDE frame, behind character image */}
+                                <div
+                                    className="absolute pointer-events-none overflow-hidden rounded-[2px]"
+                                    style={{
+                                        top: "32.5%",
+                                        left: "32.5%",
+                                        right: "32.5%",
+                                        width: "37%",
+                                        aspectRatio: "3/2",
+                                        height: "auto",
+                                        zIndex: 1,
+                                        position: "absolute",
+                                        boxShadow: `0 0 30px ${c}77`,
+                                    }}
+                                >
+                                    <AnimatePresence mode="wait">
+                                        <motion.img
+                                            key={cert.id}
+                                            src={cert.image}
+                                            alt={cert.name}
+                                            initial={{ opacity: 0, scale: 1.05 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.98 }}
+                                            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                        />
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* character on top */}
+                                <img
+                                    src={certCharacter}
+                                    alt="Harsha holding a certificate"
+                                    loading="lazy"
+                                    width={1024}
+                                    height={1536}
+                                    className="relative z-10 w-full h-full object-contain select-none pointer-events-none"
+                                    style={{
+                                        filter: `drop-shadow(0 24px 40px ${c}55)`,
+                                        mixBlendMode: "multiply"
+                                    }}
+                                />
+                            </motion.div>
                         </div>
                     </div>
 
@@ -801,29 +950,36 @@ function Certificates() {
                                     <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">
                                         Credential ID
                                     </div>
-                                    <div className="mt-1.5 font-mono text-[13px]" style={{ color: c }}>
+                                    <div className="mt-1.5 font-mono text-[13px] truncate" style={{ color: c }}>
                                         {cert.credential}
                                     </div>
                                 </div>
 
-                                <a
-                                    href="#"
-                                    className="group block text-center border px-6 py-5 font-mono text-[11px] tracking-[0.28em] uppercase transition-all"
+                                <button
+                                    onClick={() => {
+                                        if (cert.credentialLink) {
+                                            window.open(cert.credentialLink, "_blank", "noopener,noreferrer");
+                                        } else {
+                                            window.open(cert.image, "_blank", "noopener,noreferrer");
+                                        }
+                                    }}
+                                    className="group block w-full text-center border px-6 py-5 font-mono text-[11px] tracking-[0.28em] uppercase transition-all cursor-pointer"
                                     style={{
                                         borderColor: c,
                                         color: c,
+                                        background: "transparent",
                                         boxShadow: `inset 0 0 0 0 ${c}`,
                                     }}
                                     onMouseEnter={(e) => {
-                                        (e.currentTarget as HTMLAnchorElement).style.background = `${c}18`;
+                                        (e.currentTarget as HTMLButtonElement).style.background = `${c}18`;
                                     }}
                                     onMouseLeave={(e) => {
-                                        (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                                        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
                                     }}
                                 >
                                     Verify Certificate
                                     <span className="block mt-1">→</span>
-                                </a>
+                                </button>
                             </motion.div>
                         </AnimatePresence>
                     </div>
@@ -860,7 +1016,7 @@ function Home() {
             <Services />
             <Projects />
             <Certificates />
-            <Testimonials />
+            <Internships />
             <About />
             <Contact />
         </main>
