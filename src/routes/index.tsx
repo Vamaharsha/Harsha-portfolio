@@ -833,7 +833,7 @@ const getCertificateIcon = (id: string, color: string) => {
     }
 };
 
-const CertificateCard = ({ cert }: { cert: typeof CERTS[0] }) => {
+export const CertificateCard = ({ cert }: { cert: typeof CERTS[0] }) => {
     const c = cert.color;
     return (
         <div
