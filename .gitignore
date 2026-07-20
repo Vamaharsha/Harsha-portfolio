@@ -7,6 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Lovable integration files (unused, cause build errors)
+.lovable/
+components.json
+src/components/ui/
+
+
 node_modules
 dist
 dist-ssr
