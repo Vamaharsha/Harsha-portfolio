@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Internships from "@/components/internships/Internships";
+import Experience from "@/components/experience/Experience";
+import Projects from "@/components/projects/Projects";
+import SkillsDock from "@/components/dock/SkillsDock";
 import portrait from "@/assets/portrait.png";
-import project1 from "@/assets/project-1.png";
-import project2 from "@/assets/image copy.png";
-import project3 from "@/assets/image.png";
 import certCharacter from "@/assets/cert-character.png";
 import cert_cs50 from "@/assets/CS50.png";
 import cert_nptel from "@/assets/nptel.png";
@@ -44,28 +44,121 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 /* ---------- NAV ---------- */
 
+const NAV_LINKS = [
+    ["Projects", "#projects"],
+    ["Experience", "#experience"],
+    ["Services", "#services"],
+    ["Certificates", "#certificates"],
+    ["About", "#about"],
+    ["Contact", "#contact"],
+];
+
 function Nav({ theme }: { theme: "light" | "dark" }) {
     const isLight = theme === "light";
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    // Lock body scroll when mobile nav is open
+    useEffect(() => {
+        if (mobileOpen) {
+            document.body.classList.add("nav-open");
+        } else {
+            document.body.classList.remove("nav-open");
+        }
+        return () => document.body.classList.remove("nav-open");
+    }, [mobileOpen]);
+
+    const closeAndScroll = useCallback(() => {
+        setMobileOpen(false);
+    }, []);
+
     return (
-        <header className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${isLight ? "text-[#0a0a0a]" : "text-[#f5f5f5]"}`}>
-            <nav className="mx-auto max-w-[1400px] px-8 py-6 flex items-center justify-between text-[13px]">
-                <a href="#top" className="font-mono opacity-80">© Harsha Mahadeva</a>
-                <ul className="hidden md:flex items-center gap-12">
-                    {[
-                        ["Projects", "#projects"],
-                        ["Services", "#services"],
-                        ["Certificates", "#certificates"],
-                        ["About", "#about"],
-                        ["Contact", "#contact"],
-                    ].map(([l, h]) => (
-                        <li key={h}>
-                            <a href={h} className="hover:text-[#ff3d2e] transition-colors">{l}</a>
-                        </li>
-                    ))}
-                </ul>
-                <a href="#contact" className="hidden md:block hover:text-[#ff3d2e] transition-colors">Let's talk →</a>
-            </nav>
-        </header>
+        <>
+            <header className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${isLight ? "text-[#0a0a0a]" : "text-[#f5f5f5]"}`}>
+                <nav className="mx-auto max-w-[1400px] px-5 sm:px-8 py-5 md:py-6 flex items-center justify-between text-[13px]">
+                    <a href="#top" className="font-mono opacity-80 text-[12px] sm:text-[13px]">© Harsha Mahadeva</a>
+
+                    {/* Desktop nav links */}
+                    <ul className="hidden md:flex items-center gap-10 lg:gap-12">
+                        {NAV_LINKS.map(([l, h]) => (
+                            <li key={h}>
+                                <a href={h} className="hover:text-[#ff3d2e] transition-colors">{l}</a>
+                            </li>
+                        ))}
+                    </ul>
+                    <a href="#contact" className="hidden md:block hover:text-[#ff3d2e] transition-colors">Let's talk →</a>
+
+                    {/* Mobile hamburger */}
+                    <button
+                        onClick={() => setMobileOpen((o) => !o)}
+                        className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] z-[51] relative"
+                        aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                        aria-expanded={mobileOpen}
+                    >
+                        <motion.span
+                            className="block w-6 h-[1.5px] origin-center"
+                            style={{ background: isLight && !mobileOpen ? "#0a0a0a" : "#f5f5f5" }}
+                            animate={mobileOpen ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }}
+                            transition={{ duration: 0.25 }}
+                        />
+                        <motion.span
+                            className="block w-6 h-[1.5px]"
+                            style={{ background: isLight && !mobileOpen ? "#0a0a0a" : "#f5f5f5" }}
+                            animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+                            transition={{ duration: 0.2 }}
+                        />
+                        <motion.span
+                            className="block w-6 h-[1.5px] origin-center"
+                            style={{ background: isLight && !mobileOpen ? "#0a0a0a" : "#f5f5f5" }}
+                            animate={mobileOpen ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
+                            transition={{ duration: 0.25 }}
+                        />
+                    </button>
+                </nav>
+            </header>
+
+            {/* Mobile nav overlay */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <motion.div
+                        className="mobile-nav-overlay md:hidden"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        {/* Close tap area */}
+                        <div className="absolute inset-0" onClick={closeAndScroll} />
+
+                        {/* Links */}
+                        <nav className="relative z-10 flex flex-col items-center gap-8">
+                            {NAV_LINKS.map(([l, h], i) => (
+                                <motion.a
+                                    key={h}
+                                    href={h}
+                                    onClick={closeAndScroll}
+                                    className="text-[#f5f5f5] font-mono text-[13px] tracking-[0.2em] uppercase hover:text-[#ff3d2e] transition-colors"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.05 + 0.1 }}
+                                >
+                                    {l}
+                                </motion.a>
+                            ))}
+                            <motion.a
+                                href="#contact"
+                                onClick={closeAndScroll}
+                                className="mt-4 px-8 py-3 border border-[#ff3d2e] text-[#ff3d2e] font-mono text-[11px] tracking-[0.25em] uppercase hover:bg-[#ff3d2e] hover:text-white transition-all duration-300"
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.45 }}
+                            >
+                                Let's talk →
+                            </motion.a>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }
 
@@ -139,31 +232,31 @@ const Hero = memo(function Hero() {
                 </motion.div>
             </div>
 
-            {/* bottom-left socials */}
-            <div className="absolute left-8 bottom-24 z-30 font-mono text-[12px] space-y-1.5">
+            {/* bottom-left socials — hidden on very small screens */}
+            <div className="absolute left-4 sm:left-8 bottom-16 sm:bottom-24 z-30 font-mono text-[11px] sm:text-[12px] space-y-1.5">
                 {[
                     ["in", "Linkedin"],
                     ["G", "Github"],
                     ["ig", "Instagram"],
                 ].map(([k, l]) => (
-                    <a key={l} href="#" className="flex items-center gap-3 hover:text-[#ff3d2e] transition-colors">
-                        <span className="w-5 h-5 flex items-center justify-center border border-[#0a0a0a]/30 text-[10px]">{k}</span>
-                        <span>{l}</span>
+                    <a key={l} href="#" className="flex items-center gap-2 sm:gap-3 hover:text-[#ff3d2e] transition-colors">
+                        <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-[#0a0a0a]/30 text-[9px] sm:text-[10px]">{k}</span>
+                        <span className="hidden xs:inline">{l}</span>
                     </a>
                 ))}
             </div>
 
             {/* bottom-right title */}
-            <div className="absolute right-8 bottom-24 z-30 text-right">
-                <p className="text-[28px] md:text-[40px] leading-[1.05] font-medium">
-                    <span className="text-[#ff3d2e] font-mono text-[18px] align-top mr-2">//</span>
+            <div className="absolute right-4 sm:right-8 bottom-16 sm:bottom-24 z-30 text-right">
+                <p className="text-[20px] sm:text-[28px] md:text-[40px] leading-[1.05] font-medium">
+                    <span className="text-[#ff3d2e] font-mono text-[14px] sm:text-[18px] align-top mr-1 sm:mr-2">//</span>
                     Web Designer<br />
                     Art Director
                 </p>
             </div>
 
             {/* footer strip */}
-            <div className="absolute inset-x-0 bottom-0 z-30 bg-[#0a0a0a] text-[#ff3d2e] py-3 px-8 font-mono text-[11px] flex items-center gap-2">
+            <div className="absolute inset-x-0 bottom-0 z-30 bg-[#0a0a0a] text-[#ff3d2e] py-3 px-5 sm:px-8 font-mono text-[11px] flex items-center gap-2">
                 <span>// Intro</span>
             </div>
         </section>
@@ -181,11 +274,11 @@ function Stats() {
     ];
     return (
         <section className="bg-[#0a0a0a] hairline-b-dark">
-            <div className="mx-auto max-w-[1400px] px-8 py-20 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-14 sm:py-20 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                 {items.map((it, i) => (
                     <Reveal key={it.l} delay={i * 0.08}>
-                        <div className="border-l border-[#1f1f1f] pl-6">
-                            <div className="text-display text-[#f5f5f5]" style={{ fontSize: "72px" }}>{it.v}</div>
+                        <div className="border-l border-[#1f1f1f] pl-4 sm:pl-6">
+                            <div className="text-display text-[#f5f5f5]" style={{ fontSize: "clamp(44px, 10vw, 72px)" }}>{it.v}</div>
                             <div className="mt-3 text-[11px] font-mono text-[#6b6b6b] uppercase tracking-wider">{it.l}</div>
                         </div>
                     </Reveal>
@@ -209,13 +302,14 @@ const SERVICES = [
 function Services() {
     return (
         <section id="services" className="bg-[#0a0a0a] text-[#f5f5f5] hairline-b-dark">
-            <div className="mx-auto max-w-[1400px] px-8 py-6 hairline-b-dark">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-6 hairline-b-dark">
                 <SectionLabel>Services</SectionLabel>
             </div>
-            <div className="mx-auto max-w-[1400px] px-8 py-20 grid md:grid-cols-[1fr_2fr] gap-16 items-start">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-12 sm:py-20 grid md:grid-cols-[1fr_2fr] gap-8 md:gap-16 items-start">
+                {/* Outline number — hidden on mobile to save space */}
                 <Reveal>
                     <div
-                        className="text-display text-transparent"
+                        className="hidden md:block text-display text-transparent"
                         style={{
                             fontSize: "clamp(140px, 18vw, 240px)",
                             WebkitTextStroke: "1.5px #f5f5f5",
@@ -227,11 +321,11 @@ function Services() {
                 <div>
                     {SERVICES.map((s, i) => (
                         <Reveal key={s} delay={i * 0.05}>
-                            <div className="group flex items-center justify-between py-5 border-b border-[#1f1f1f] hover:pl-3 transition-all duration-500 cursor-pointer">
-                                <span className="text-[20px] md:text-[22px] font-medium group-hover:text-[#ff3d2e] transition-colors">
+                            <div className="group flex items-center justify-between py-4 sm:py-5 border-b border-[#1f1f1f] hover:pl-3 transition-all duration-500 cursor-pointer">
+                                <span className="text-[17px] sm:text-[20px] md:text-[22px] font-medium group-hover:text-[#ff3d2e] transition-colors pr-4">
                                     {s}
                                 </span>
-                                <span className="font-mono text-[12px] text-[#6b6b6b]">0{i + 1}</span>
+                                <span className="font-mono text-[12px] text-[#6b6b6b] shrink-0">0{i + 1}</span>
                             </div>
                         </Reveal>
                     ))}
@@ -242,82 +336,10 @@ function Services() {
 }
 
 /* ---------- PROJECTS ---------- */
+// Projects section is imported from @/components/projects/Projects
 
-const PROJECTS = [
-    {
-        year: "2025",
-        title: "Mango Leaf\nSCANNEX PRO",
-        desc: "A deep-learning leaf disease classifier with a real-time scanning interface for field deployment. Custom CNN, augmented dataset, on-device inference — built to help farmers diagnose crop disease in under two seconds.",
-        image: project2,
-        tags: ["AI / ML", "Mobile App", "Research"],
-    },
-    {
-        year: "2024",
-        title: "HM-SIW\nFilter ML",
-        desc: "Half-mode substrate-integrated waveguide bandpass filter optimised through an artificial neural network surrogate model. Validated in HFSS, published as IEEE conference paper.",
-        image: project3,
-        tags: ["RF Design", "HFSS", "ANN"],
-    },
-    {
-        year: "2024",
-        title: "Formula\nVintage",
-        desc: "Brand and product identity for an automotive collectors' platform. Combining timeless elegance with sleek, contemporary elements — an experience that appeals to enthusiasts and newcomers alike.",
-        image: project1,
-        tags: ["Landing Page", "Branding", "Redesign"],
-    },
-];
-
-function Projects() {
-    return (
-        <section id="projects" className="bg-[#0a0a0a] text-[#f5f5f5] hairline-b-dark">
-            <div className="mx-auto max-w-[1400px] px-8 py-6 hairline-b-dark">
-                <SectionLabel>Projects</SectionLabel>
-            </div>
-            <div className="mx-auto max-w-[1400px] px-8 py-20 space-y-10">
-                {PROJECTS.map((p, i) => (
-                    <Reveal key={p.title} delay={i * 0.05}>
-                        <article className="grid md:grid-cols-[1.4fr_1fr] gap-0 border border-[#1f1f1f]">
-                            {/* image */}
-                            <div className="relative group overflow-hidden bg-[#111] aspect-[4/3] md:aspect-auto">
-                                <img
-                                    src={p.image}
-                                    alt={p.title}
-                                    loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-                                />
-                                <a
-                                    href="#"
-                                    className="absolute inset-0 flex items-center justify-center"
-                                    aria-label="View project"
-                                >
-                                    <span className="w-20 h-20 rounded-full bg-[#ff3d2e] text-white flex items-center justify-center text-[13px] font-medium transition-transform duration-300 group-hover:scale-110">
-                                        View
-                                    </span>
-                                </a>
-                            </div>
-
-                            {/* content */}
-                            <div className="p-10 flex flex-col">
-                                <p className="font-mono text-[11px] text-[#6b6b6b]">( {p.year} )</p>
-                                <h3 className="text-display mt-6 whitespace-pre-line" style={{ fontSize: "clamp(40px, 4vw, 56px)" }}>
-                                    {p.title}
-                                </h3>
-                                <p className="mt-6 text-[14px] leading-relaxed text-[#9a9a9a] max-w-md">{p.desc}</p>
-                                <div className="mt-auto pt-10 border-t border-[#1f1f1f] -mx-10 px-10">
-                                    {p.tags.map((t) => (
-                                        <div key={t} className="flex items-center justify-between py-2.5 text-[13px] border-b border-[#1f1f1f] last:border-0">
-                                            <span>{t}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </article>
-                    </Reveal>
-                ))}
-            </div>
-        </section>
-    );
-}
+/* ---------- SKILLS DOCK ---------- */
+// SkillsDock section is imported from @/components/dock/SkillsDock
 
 /* ---------- INTERNSHIPS ---------- */
 // The Internships section is imported from @/components/internships/Internships
@@ -327,16 +349,16 @@ function Projects() {
 function About() {
     return (
         <section id="about" className="bg-[#0a0a0a] text-[#f5f5f5] hairline-b-dark">
-            <div className="mx-auto max-w-[1400px] px-8 py-6 hairline-b-dark">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-6 hairline-b-dark">
                 <SectionLabel>About</SectionLabel>
             </div>
-            <div className="mx-auto max-w-[1400px] px-8 py-24 grid md:grid-cols-[1.5fr_1fr] gap-16">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-14 sm:py-24 grid md:grid-cols-[1.5fr_1fr] gap-10 md:gap-16">
                 <Reveal>
-                    <h2 className="text-display text-[#f5f5f5]" style={{ fontSize: "clamp(40px, 5.5vw, 88px)" }}>
+                    <h2 className="text-display text-[#f5f5f5]" style={{ fontSize: "clamp(36px, 5.5vw, 88px)" }}>
                         Engineer by training,<br />
                         <span className="text-[#ff3d2e]">builder</span> by instinct.
                     </h2>
-                    <div className="mt-12 space-y-5 text-[15px] leading-relaxed text-[#9a9a9a] max-w-xl">
+                    <div className="mt-8 sm:mt-12 space-y-5 text-[14px] sm:text-[15px] leading-relaxed text-[#9a9a9a] max-w-xl">
                         <p>
                             I'm Harsha — a final-year Electronics & Communication engineer at Sri Vasavi
                             Engineering College, Vijayawada. My work lives in the overlap of signal processing,
@@ -348,16 +370,16 @@ function About() {
                         </p>
                     </div>
                 </Reveal>
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                     {[
                         ["Based in", "Vijayawada, India"],
                         ["Graduating", "2026"],
                         ["Focus", "AI · RF · Web"],
                         ["Status", "Open to roles"],
                     ].map(([k, v]) => (
-                        <div key={k} className="flex justify-between py-4 border-b border-[#1f1f1f]">
-                            <span className="font-mono text-[11px] text-[#6b6b6b] uppercase tracking-wider">{k}</span>
-                            <span className="text-[14px]">{v}</span>
+                        <div key={k} className="flex justify-between py-3 sm:py-4 border-b border-[#1f1f1f]">
+                            <span className="font-mono text-[10px] sm:text-[11px] text-[#6b6b6b] uppercase tracking-wider">{k}</span>
+                            <span className="text-[13px] sm:text-[14px]">{v}</span>
                         </div>
                     ))}
                 </div>
@@ -369,56 +391,254 @@ function About() {
 /* ---------- CONTACT ---------- */
 
 function Contact() {
+    const contactRef = useRef<HTMLDivElement>(null);
+    const contactInView = useInView(contactRef, { once: true, margin: "-80px" });
+
+    const SOCIALS = [
+        { label: "LinkedIn", abbr: "in", href: "https://www.linkedin.com/in/vamaharsha-mahadeva/" },
+        { label: "GitHub", abbr: "GH", href: "https://github.com/Vamaharsha" },
+        { label: "Instagram", abbr: "IG", href: "https://www.instagram.com/vamaharsha_mahadeva/" },
+    ];
+
     return (
-        <section id="contact" className="relative bg-[#e8e6e1] text-[#0a0a0a] overflow-hidden min-h-[90vh]">
-            <div className="mx-auto max-w-[1400px] px-8 py-6 hairline-b-light text-[#ff3d2e] font-mono text-[11px]">
-        // Contact
+        <section id="contact" className="relative bg-[#e8e6e1] text-[#0a0a0a] overflow-hidden">
+            {/* Section label bar */}
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-6 hairline-b-light">
+                <span className="text-[#ff3d2e] font-mono text-[11px] tracking-[0.15em] uppercase">// Contact</span>
             </div>
 
-            <div className="relative">
-                <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
-                    <img
-                        src={portrait}
-                        alt=""
-                        className="h-[80vh] w-auto object-contain object-bottom select-none"
-                        style={{ filter: "grayscale(100%) contrast(1.05)" }}
-                    />
-                </div>
-
-                <div className="relative z-10 pt-32 pb-40 px-8">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-display text-[#0a0a0a] text-center whitespace-nowrap"
-                        style={{ fontSize: "clamp(80px, 17vw, 280px)" }}
-                    >
-                        Out — Reach
-                    </motion.h2>
-                </div>
-
-                <div className="absolute left-8 bottom-32 z-20 font-mono text-[12px] space-y-1">
-                    <p><span className="font-semibold">Office:</span> Vijayawada, Andhra Pradesh, India</p>
-                    <p><span className="font-semibold">Mail:</span> vamaharsha.m@gmail.com</p>
-                    <p><span className="font-semibold">Phone:</span> +91 9392849219</p>
-                    <div className="flex gap-4 pt-3">
-                        {["Linkedin", "Github", "Instagram"].map((s) => (
-                            <a key={s} href="#" className="hover:text-[#ff3d2e] transition-colors">{s}</a>
-                        ))}
-                    </div>
-                </div>
-
-                <a
-                    href="#top"
-                    className="absolute right-8 top-16 z-20 w-12 h-12 rounded-full border border-[#0a0a0a] flex items-center justify-center hover:bg-[#0a0a0a] hover:text-[#e8e6e1] transition-colors"
-                    aria-label="Back to top"
+            {/* Main content */}
+            <div
+                ref={contactRef}
+                className="mx-auto max-w-[1400px] px-5 sm:px-8 py-12 md:py-24"
+            >
+                <motion.div
+                    className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    ↑
-                </a>
+                    {/* ── LEFT COLUMN — Info ── */}
+                    <div className="space-y-8">
+                        {/* Eyebrow */}
+                        <motion.div
+                            className="flex items-center gap-3"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={contactInView ? { opacity: 1, x: 0 } : {}}
+                            transition={{ delay: 0.2, duration: 0.6 }}
+                        >
+                            <div className="w-8 h-px bg-[#ff3d2e]" />
+                            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-[#ff3d2e]">
+                                Available for Work
+                            </span>
+                        </motion.div>
+
+                        {/* Heading */}
+                        <motion.h2
+                            className="text-display text-[#0a0a0a]"
+                            style={{
+                                fontSize: "clamp(36px, 5.5vw, 72px)",
+                                lineHeight: 1,
+                                letterSpacing: "-0.03em",
+                            }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.3, duration: 0.7 }}
+                        >
+                            Let's Build
+                            <br />
+                            <span className="text-[#ff3d2e]">Something</span> Great
+                        </motion.h2>
+
+                        {/* Description */}
+                        <motion.p
+                            className="text-[15px] md:text-[16px] leading-relaxed text-[#555550] max-w-[520px]"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                        >
+                            I'm passionate about AI, full-stack development, and embedded systems.
+                            Whether you have a project idea, internship opportunity, or just want
+                            to collaborate on something meaningful — I'd love to hear from you.
+                        </motion.p>
+
+                        {/* Contact Details Grid */}
+                        <motion.div
+                            className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-5 pt-2"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.5, duration: 0.6 }}
+                        >
+                            {/* Location */}
+                            <div className="group flex items-start gap-3">
+                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Location</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a]">Vijayawada, Andhra Pradesh</div>
+                                </div>
+                            </div>
+
+                            {/* Email */}
+                            <a href="mailto:vamaharsha.m@gmail.com" className="group flex items-start gap-3">
+                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Email</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] group-hover:text-[#ff3d2e] transition-colors">vamaharsha.m@gmail.com</div>
+                                </div>
+                            </a>
+
+                            {/* Phone */}
+                            <a href="tel:+919392849219" className="group flex items-start gap-3">
+                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Phone</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] group-hover:text-[#ff3d2e] transition-colors">+91 93928 49219</div>
+                                </div>
+                            </a>
+
+                            {/* Availability */}
+                            <div className="group flex items-start gap-3">
+                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Availability</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] flex items-center gap-2">
+                                        Open to Opportunities
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Social Links */}
+                        <motion.div
+                            className="flex items-center gap-3 pt-2"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.6, duration: 0.5 }}
+                        >
+                            {SOCIALS.map((s) => (
+                                <a
+                                    key={s.label}
+                                    href={s.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex items-center gap-2.5 px-4 py-2.5 border border-[#0a0a0a]/10 rounded-md font-mono text-[11px] tracking-[0.1em] text-[#0a0a0a]/70 hover:border-[#ff3d2e] hover:text-[#ff3d2e] hover:bg-[#ff3d2e]/[0.04] transition-all duration-300"
+                                >
+                                    <span className="w-5 h-5 flex items-center justify-center border border-current/30 rounded-sm text-[9px] font-bold group-hover:border-current transition-colors">
+                                        {s.abbr}
+                                    </span>
+                                    {s.label}
+                                </a>
+                            ))}
+                        </motion.div>
+
+                        {/* CTA Button */}
+                        <motion.a
+                            href="mailto:vamaharsha.m@gmail.com"
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-[#0a0a0a] text-[#e8e6e1] font-mono text-[11px] tracking-[0.25em] uppercase rounded-sm hover:bg-[#ff3d2e] transition-all duration-400 group"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={contactInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.7, duration: 0.5 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            Send me an email
+                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </motion.a>
+                    </div>
+
+                    {/* ── RIGHT COLUMN — Portrait ── */}
+                    <motion.div
+                        className="relative flex items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={contactInView ? { opacity: 1, scale: 1 } : {}}
+                        transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                        {/* Accent frame behind portrait */}
+                        <div
+                            className="absolute inset-4 md:inset-6 rounded-sm pointer-events-none"
+                            style={{
+                                border: "1.5px solid #ff3d2e22",
+                                transform: "rotate(2deg)",
+                            }}
+                        />
+                        <div
+                            className="absolute inset-4 md:inset-6 rounded-sm pointer-events-none"
+                            style={{
+                                border: "1.5px solid #0a0a0a10",
+                                transform: "rotate(-1.5deg)",
+                            }}
+                        />
+
+                        {/* Portrait container */}
+                        <div className="relative w-full max-w-[480px] aspect-[3/4] overflow-hidden rounded-sm">
+                            <img
+                                src={portrait}
+                                alt="Vamaharsha Mahadeva"
+                                className="w-full h-full object-cover object-top select-none"
+                                style={{ filter: "grayscale(100%) contrast(1.08)" }}
+                            />
+
+                            {/* Subtle gradient overlay at bottom */}
+                            <div
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                    background: "linear-gradient(180deg, transparent 50%, #e8e6e140 85%, #e8e6e1 100%)",
+                                }}
+                            />
+
+                            {/* Corner accents */}
+                            <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-[#ff3d2e] opacity-60" />
+                            <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-[#ff3d2e] opacity-60" />
+                            <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-[#ff3d2e] opacity-60" />
+                            <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-[#ff3d2e] opacity-60" />
+
+                            {/* Name overlay at bottom */}
+                            <div className="absolute bottom-6 left-0 right-0 text-center z-10">
+                                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#0a0a0a]/60">
+                                    Vamaharsha Mahadeva
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+
+                {/* Back to top */}
+                <div className="flex justify-end mt-12">
+                    <a
+                        href="#top"
+                        className="w-11 h-11 rounded-full border border-[#0a0a0a]/20 flex items-center justify-center hover:bg-[#0a0a0a] hover:text-[#e8e6e1] hover:border-[#0a0a0a] transition-all duration-300 text-[14px]"
+                        aria-label="Back to top"
+                    >
+                        ↑
+                    </a>
+                </div>
             </div>
 
-            <footer className="absolute bottom-0 inset-x-0 bg-[#0a0a0a] text-[#6b6b6b] py-4 px-8 flex items-center justify-between font-mono text-[11px]">
+            {/* Footer */}
+            <footer className="bg-[#0a0a0a] text-[#6b6b6b] py-4 px-5 sm:px-8 flex flex-col sm:flex-row items-center sm:justify-between gap-1 font-mono text-[10px] sm:text-[11px] text-center sm:text-left">
                 <span>© 2026 Vamaharsha Mahadeva</span>
                 <span>Built with care · TanStack + Motion</span>
             </footer>
@@ -732,17 +952,17 @@ function Certificates() {
                 transition={{ duration: 0.8 }}
             />
 
-            <div className="relative mx-auto max-w-[1400px] px-8 py-6 hairline-b-dark">
+            <div className="relative mx-auto max-w-[1400px] px-4 sm:px-8 py-6 hairline-b-dark">
                 <SectionLabel>Credentials</SectionLabel>
             </div>
 
-            <div className="relative mx-auto max-w-[1400px] px-8 pt-16 pb-28">
+            <div className="relative mx-auto max-w-[1400px] px-4 sm:px-8 pt-10 sm:pt-16 pb-14 sm:pb-28">
                 {/* Title */}
                 <Reveal>
                     <h2
                         className="text-display text-center mx-auto"
                         style={{
-                            fontSize: "clamp(56px, 9vw, 144px)",
+                            fontSize: "clamp(38px, 9vw, 144px)",
                             lineHeight: 0.9,
                             letterSpacing: "-0.03em",
                         }}
@@ -758,8 +978,98 @@ function Certificates() {
                     </h2>
                 </Reveal>
 
-                {/* 3 column layout */}
-                <div className="mt-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)] gap-10 lg:gap-12 items-start">
+                {/* ══ MOBILE: pill tabs + stacked details (< lg) ══ */}
+                <div className="lg:hidden mt-8 space-y-6">
+                    {/* Horizontal scrollable pill tabs */}
+                    <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 -mx-1 px-1">
+                        {CERTS.map((ct, i) => {
+                            const isActive = i === active;
+                            return (
+                                <button
+                                    key={ct.id}
+                                    onClick={() => setActive(i)}
+                                    className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border font-mono text-[11px] tracking-wide transition-all duration-300 cursor-pointer"
+                                    style={{
+                                        borderColor: isActive ? ct.color : "#2a2a2a",
+                                        color: isActive ? ct.color : "#6b6b6b",
+                                        background: isActive ? `${ct.color}12` : "transparent",
+                                        boxShadow: isActive ? `0 0 12px ${ct.color}22` : "none",
+                                    }}
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: isActive ? ct.color : "#4a4a4a" }} />
+                                    {ct.name.length > 20 ? ct.name.slice(0, 20) + "…" : ct.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Active cert details — mobile */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={cert.id}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.4 }}
+                            className="border border-[#1c1c1c] rounded-md p-5 space-y-5"
+                            style={{ background: `linear-gradient(160deg, ${c}08, transparent)` }}
+                        >
+                            <div className="flex items-start justify-between gap-3">
+                                <div>
+                                    <span
+                                        className="inline-block px-3 py-1 border font-mono text-[9px] tracking-[0.2em] uppercase rounded-sm mb-3"
+                                        style={{ borderColor: c, color: c }}
+                                    >
+                                        {cert.category}
+                                    </span>
+                                    <h3
+                                        className="text-display text-[#f5f5f5]"
+                                        style={{ fontSize: "clamp(20px, 5vw, 32px)", lineHeight: 1.1, letterSpacing: "-0.02em", textTransform: "uppercase" }}
+                                    >
+                                        {cert.name}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#5a5a5a]">Issued By</div>
+                                    <div className="mt-1.5 text-[13px] font-medium" style={{ color: c }}>{cert.issuer}</div>
+                                </div>
+                                <div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#5a5a5a]">Date</div>
+                                    <div className="mt-1.5 text-[13px] font-medium text-[#f0f0f0]">{cert.date}</div>
+                                </div>
+                            </div>
+
+                            <p className="text-[13px] leading-relaxed text-[#9a9a9a] border-l pl-4" style={{ borderColor: c }}>
+                                {cert.description}
+                            </p>
+
+                            <div className="rounded-sm border px-3 py-2.5" style={{ borderColor: "#1f1f1f", background: "#0d0d0d" }}>
+                                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#5a5a5a]">Credential ID</div>
+                                <div className="mt-1 font-mono text-[11px] truncate" style={{ color: c }}>{cert.credential}</div>
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    if (cert.credentialLink) {
+                                        window.open(cert.credentialLink, "_blank", "noopener,noreferrer");
+                                    } else {
+                                        window.open(cert.image, "_blank", "noopener,noreferrer");
+                                    }
+                                }}
+                                className="block w-full text-center border px-5 py-4 font-mono text-[10px] tracking-[0.25em] uppercase transition-all cursor-pointer"
+                                style={{ borderColor: c, color: c, background: "transparent" }}
+                            >
+                                Verify Certificate →
+                            </button>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                {/* ══ DESKTOP: 3-column layout (lg+) ══ */}
+                <div className="hidden lg:grid mt-20 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)] gap-10 lg:gap-12 items-start">
                     {/* LEFT — list */}
                     <ul className="space-y-4">
                         {CERTS.map((ct, i) => {
@@ -835,24 +1145,19 @@ function Certificates() {
                                 transition={{ duration: 0.6 }}
                             />
 
-                            {/* Floating wrapper — keeps cert overlay & character in sync */}
+                            {/* Floating wrapper */}
                             <motion.div
                                 className="relative w-full h-full"
                                 animate={{ y: [0, -6, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             >
-                                {/* certificate overlay INSIDE frame, behind character image */}
+                                {/* certificate overlay */}
                                 <div
                                     className="absolute pointer-events-none overflow-hidden rounded-[2px]"
                                     style={{
-                                        top: "32.5%",
-                                        left: "32.5%",
-                                        right: "32.5%",
-                                        width: "37%",
-                                        aspectRatio: "3/2",
-                                        height: "auto",
-                                        zIndex: 1,
-                                        position: "absolute",
+                                        top: "32.5%", left: "32.5%", right: "32.5%",
+                                        width: "37%", aspectRatio: "3/2", height: "auto",
+                                        zIndex: 1, position: "absolute",
                                         boxShadow: `0 0 30px ${c}77`,
                                     }}
                                 >
@@ -919,40 +1224,22 @@ function Certificates() {
 
                                 <div className="grid grid-cols-2 gap-6 pt-2">
                                     <div>
-                                        <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">
-                                            Issued By
-                                        </div>
-                                        <div className="mt-2 text-[15px] font-medium" style={{ color: c }}>
-                                            {cert.issuer}
-                                        </div>
+                                        <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">Issued By</div>
+                                        <div className="mt-2 text-[15px] font-medium" style={{ color: c }}>{cert.issuer}</div>
                                     </div>
                                     <div>
-                                        <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">
-                                            Date
-                                        </div>
-                                        <div className="mt-2 text-[15px] font-medium text-[#f0f0f0]">
-                                            {cert.date}
-                                        </div>
+                                        <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">Date</div>
+                                        <div className="mt-2 text-[15px] font-medium text-[#f0f0f0]">{cert.date}</div>
                                     </div>
                                 </div>
 
-                                <p
-                                    className="text-[14px] leading-relaxed text-[#9a9a9a] border-l pl-5"
-                                    style={{ borderColor: c }}
-                                >
+                                <p className="text-[14px] leading-relaxed text-[#9a9a9a] border-l pl-5" style={{ borderColor: c }}>
                                     {cert.description}
                                 </p>
 
-                                <div
-                                    className="rounded-sm border px-4 py-3"
-                                    style={{ borderColor: "#1f1f1f", background: "#0d0d0d" }}
-                                >
-                                    <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">
-                                        Credential ID
-                                    </div>
-                                    <div className="mt-1.5 font-mono text-[13px] truncate" style={{ color: c }}>
-                                        {cert.credential}
-                                    </div>
+                                <div className="rounded-sm border px-4 py-3" style={{ borderColor: "#1f1f1f", background: "#0d0d0d" }}>
+                                    <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a5a5a]">Credential ID</div>
+                                    <div className="mt-1.5 font-mono text-[13px] truncate" style={{ color: c }}>{cert.credential}</div>
                                 </div>
 
                                 <button
@@ -1017,6 +1304,8 @@ function Home() {
             <Projects />
             <Certificates />
             <Internships />
+            <Experience />
+            <SkillsDock />
             <About />
             <Contact />
         </main>

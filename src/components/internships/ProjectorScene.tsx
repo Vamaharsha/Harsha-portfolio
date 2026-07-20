@@ -1,9 +1,9 @@
 /**
- * ProjectorScene — Cinematic projector built entirely with CSS/SVG.
+ * ProjectorScene — Cinematic projector using real projector.png asset.
  *
  * Visual stack (bottom to top):
  *   1. Perspective floor grid
- *   2. Projector device (CSS + SVG lens)
+ *   2. Real projector image (back-view, transparent PNG)
  *   3. Light cone (clip-path trapezoid)
  *   4. Dust particles floating through beam
  *   5. Wall / screen with dashed border
@@ -13,6 +13,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import type { Internship } from "./InternshipData";
+import projectorImg from "@/assets/projector.png";
 
 interface Props {
     active: Internship;
@@ -49,14 +50,14 @@ export default function ProjectorScene({ active }: Props) {
             {/* ── Floor glow beneath projector ── */}
             <motion.div
                 aria-hidden
-                className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[50%] h-10 rounded-[50%] blur-2xl pointer-events-none"
+                className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[55%] h-12 rounded-[50%] blur-2xl pointer-events-none"
                 animate={{
                     background: `radial-gradient(ellipse, ${c}55 0%, transparent 70%)`,
                 }}
                 transition={{ duration: 0.6 }}
             />
 
-            {/* ── WALL / SCREEN ── */}
+            {/* ── REALISTIC PROJECTOR SCREEN ── */}
             <div
                 className="relative w-[82%] mx-auto"
                 style={{
@@ -64,41 +65,69 @@ export default function ProjectorScene({ active }: Props) {
                     marginBottom: "0",
                 }}
             >
-                {/* Screen border — dashed neon frame */}
-                <motion.div
-                    className="absolute inset-0 rounded-sm pointer-events-none"
-                    animate={{
-                        borderColor: `${c}60`,
-                        boxShadow: `0 0 30px ${c}18, inset 0 0 40px ${c}08`,
-                    }}
-                    transition={{ duration: 0.6 }}
+                {/* Outer frame — dark beveled edge like a real screen housing */}
+                <div
+                    className="absolute inset-0 rounded-[3px] pointer-events-none"
                     style={{
-                        border: "1.5px dashed",
+                        background: "linear-gradient(180deg, #1a1a1e 0%, #111114 50%, #0a0a0d 100%)",
+                        boxShadow: "0 2px 12px #00000066, inset 0 1px 0 #2a2a30",
+                    }}
+                />
+                {/* Inner frame bevel */}
+                <div
+                    className="absolute inset-[3px] rounded-[2px] pointer-events-none"
+                    style={{
+                        boxShadow: "inset 0 1px 3px #00000088, inset 0 -1px 2px #ffffff08",
                     }}
                 />
 
-                {/* Dark screen interior */}
+                {/* Screen surface — off-white matte like a real projection screen */}
                 <div
-                    className="absolute inset-[2px] overflow-hidden"
+                    className="absolute inset-[4px] overflow-hidden rounded-[1px]"
                     style={{
-                        background: "linear-gradient(180deg, #0a0b0f 0%, #0d0e13 100%)",
+                        background: "linear-gradient(175deg, #e8e6e1 0%, #dfdcd6 35%, #d8d5cf 65%, #d0cdc7 100%)",
                     }}
                 >
-                    {/* Subtle corner markers */}
-                    <div className="absolute top-2 left-2 w-3 h-3 border-t border-l" style={{ borderColor: `${c}40` }} />
-                    <div className="absolute top-2 right-2 w-3 h-3 border-t border-r" style={{ borderColor: `${c}40` }} />
-                    <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l" style={{ borderColor: `${c}40` }} />
-                    <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r" style={{ borderColor: `${c}40` }} />
+                    {/* Projector hotspot — brighter in center, dimmer at edges (realistic) */}
+                    <div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: "radial-gradient(ellipse 70% 65% at 50% 48%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 40%, transparent 75%)",
+                        }}
+                    />
 
-                    {/* Certificate image — actual projection */}
+                    {/* Edge vignette — projector light falls off at screen edges */}
+                    <div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            boxShadow: "inset 0 0 60px rgba(0,0,0,0.18), inset 0 0 120px rgba(0,0,0,0.08)",
+                        }}
+                    />
+
+                    {/* Faint canvas/fabric texture — extremely subtle */}
+                    <div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                        style={{
+                            backgroundImage: `
+                                repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, transparent 2px),
+                                repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, transparent 2px)
+                            `,
+                            backgroundSize: "3px 3px",
+                        }}
+                    />
+
+                    {/* Certificate image — projected onto the screen */}
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={active.id}
-                            initial={{ opacity: 0, scale: 1.03 }}
+                            initial={{ opacity: 0, scale: 1.02 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.97 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                            className="absolute inset-0 flex items-center justify-center p-[6%]"
+                            className="absolute inset-0 flex items-center justify-center p-[5%]"
                         >
                             {active.certificateImage ? (
                                 <img
@@ -106,7 +135,7 @@ export default function ProjectorScene({ active }: Props) {
                                     alt={`${active.company} certificate`}
                                     className="w-full h-full object-contain"
                                     style={{
-                                        filter: `drop-shadow(0 0 20px ${c}44)`,
+                                        filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15))",
                                     }}
                                 />
                             ) : (
@@ -114,12 +143,12 @@ export default function ProjectorScene({ active }: Props) {
                                 <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center">
                                     <span
                                         className="font-mono text-[10px] tracking-[0.3em] uppercase"
-                                        style={{ color: `${c}88` }}
+                                        style={{ color: "#555550" }}
                                     >
                                         {active.company}
                                     </span>
                                     <h4
-                                        className="text-display text-[#e8e8ea] uppercase"
+                                        className="text-display text-[#2a2a28] uppercase"
                                         style={{
                                             fontSize: "clamp(14px, 2.2vw, 28px)",
                                             letterSpacing: "-0.01em",
@@ -129,44 +158,41 @@ export default function ProjectorScene({ active }: Props) {
                                     </h4>
                                     <div
                                         className="w-[60%] h-px mt-1 mb-1"
-                                        style={{ background: `linear-gradient(90deg, transparent, ${c}66, transparent)` }}
+                                        style={{ background: "linear-gradient(90deg, transparent, #88888866, transparent)" }}
                                     />
-                                    <span className="font-mono text-[10px] text-[#6b6b6b]">
+                                    <span className="font-mono text-[10px] text-[#777774]">
                                         {active.year} · {active.duration} · {active.mode}
                                     </span>
-                                    <motion.span
-                                        className="mt-2 font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-sm border"
-                                        style={{
-                                            borderColor: `${c}55`,
-                                            color: c,
-                                            background: `${c}10`,
-                                        }}
-                                        animate={{ opacity: [0.5, 1, 0.5] }}
-                                        transition={{ duration: 2.5, repeat: Infinity }}
-                                    >
-                                        [COMPLETED]
-                                    </motion.span>
                                 </div>
                             )}
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Scanline sweep effect */}
+                    {/* Subtle warm color wash from projector light — very faint */}
+                    <motion.div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+                        animate={{
+                            background: `radial-gradient(ellipse 80% 70% at 50% 55%, ${c} 0%, transparent 70%)`,
+                        }}
+                        transition={{ duration: 0.8 }}
+                    />
+
+                    {/* Scanline sweep effect — very subtle on light screen */}
                     <div
                         aria-hidden
-                        className="absolute inset-0 pointer-events-none scanline-sweep"
+                        className="absolute inset-0 pointer-events-none scanline-sweep opacity-[0.06]"
                         style={{
-                            background: `linear-gradient(180deg, transparent 0%, ${c}08 50%, transparent 100%)`,
-                            backgroundSize: "100% 4px",
+                            background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 50%, transparent 100%)",
                         }}
                     />
 
-                    {/* Horizontal scanlines texture */}
+                    {/* Horizontal scanlines — barely visible on light surface */}
                     <div
                         aria-hidden
-                        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+                        className="absolute inset-0 pointer-events-none opacity-[0.02]"
                         style={{
-                            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, #fff 2px, #fff 3px)",
+                            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 3px)",
                         }}
                     />
                 </div>
@@ -181,30 +207,43 @@ export default function ProjectorScene({ active }: Props) {
                 </div>
             </div>
 
-            {/* ── LIGHT CONE ── */}
-            <div className="relative w-[82%] flex justify-center" style={{ height: "80px" }}>
+            {/* ── LIGHT CONE — connects screen bottom to projector top ── */}
+            <div className="relative w-[82%] flex justify-center" style={{ height: "90px" }}>
+                {/* Main light cone */}
                 <motion.div
                     aria-hidden
                     className="absolute top-0 w-full h-full pointer-events-none"
                     animate={{
-                        background: `linear-gradient(180deg, ${c}12 0%, ${c}04 60%, transparent 100%)`,
+                        background: `linear-gradient(180deg, ${c}10 0%, ${c}06 40%, ${c}03 70%, transparent 100%)`,
                     }}
                     transition={{ duration: 0.6 }}
                     style={{
-                        clipPath: "polygon(30% 0%, 70% 0%, 55% 100%, 45% 100%)",
+                        clipPath: "polygon(25% 0%, 75% 0%, 56% 100%, 44% 100%)",
                     }}
                 />
                 {/* Center beam highlight */}
                 <motion.div
                     aria-hidden
                     className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full pointer-events-none"
-                    animate={{ background: `linear-gradient(180deg, ${c}30, transparent)` }}
+                    animate={{ background: `linear-gradient(180deg, ${c}25, transparent)` }}
                     transition={{ duration: 0.6 }}
+                />
+                {/* Wider secondary glow */}
+                <motion.div
+                    aria-hidden
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-full pointer-events-none opacity-40 blur-sm"
+                    animate={{
+                        background: `linear-gradient(180deg, ${c}15 0%, transparent 80%)`,
+                    }}
+                    transition={{ duration: 0.6 }}
+                    style={{
+                        clipPath: "polygon(20% 0%, 80% 0%, 60% 100%, 40% 100%)",
+                    }}
                 />
             </div>
 
             {/* ── DUST PARTICLES in beam ── */}
-            <div aria-hidden className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-[30%] h-[55%] pointer-events-none overflow-hidden">
+            <div aria-hidden className="absolute bottom-[18%] left-1/2 -translate-x-1/2 w-[30%] h-[50%] pointer-events-none overflow-hidden">
                 {[0, 1, 2, 3, 4, 5, 6].map((i) => (
                     <motion.span
                         key={i}
@@ -230,78 +269,50 @@ export default function ProjectorScene({ active }: Props) {
                 ))}
             </div>
 
-            {/* ── PROJECTOR DEVICE ── */}
-            <div className="relative z-10 flex flex-col items-center" style={{ marginTop: "-4px" }}>
-                {/* Projector body */}
-                <div
-                    className="relative flex items-center justify-center"
-                    style={{
-                        width: "110px",
-                        height: "44px",
-                        background: "linear-gradient(180deg, #2a2a30 0%, #18181c 40%, #111114 100%)",
-                        borderRadius: "6px 6px 4px 4px",
-                        border: "1px solid #2f2f35",
-                        boxShadow: `0 4px 20px #00000066, 0 0 15px ${c}15`,
+            {/* ── REAL PROJECTOR IMAGE ── */}
+            <div className="relative z-10 flex flex-col items-center" style={{ marginTop: "-8px" }}>
+                {/* Lens glow — positioned at top-center of the projector (where the lens faces up) */}
+                <motion.div
+                    aria-hidden
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 rounded-[50%] blur-lg pointer-events-none z-20"
+                    animate={{
+                        background: `radial-gradient(ellipse, ${c}88 0%, ${c}44 40%, transparent 80%)`,
+                        boxShadow: `0 0 20px ${c}66`,
                     }}
-                >
-                    {/* Vent lines on left */}
-                    <div className="absolute left-2 top-1/2 -translate-y-1/2 flex flex-col gap-[2px]">
-                        {[0, 1, 2, 3].map((i) => (
-                            <div key={i} className="w-4 h-[1px] bg-[#3a3a40]" />
-                        ))}
-                    </div>
+                    transition={{ duration: 0.5 }}
+                />
 
-                    {/* Lens — centered */}
-                    <motion.div
-                        className="relative w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{
-                            background: "radial-gradient(circle, #1a1a20 40%, #0f0f14 100%)",
-                            border: "2px solid #3a3a42",
-                        }}
-                    >
-                        {/* Lens inner glow */}
-                        <motion.div
-                            className="w-4 h-4 rounded-full"
-                            animate={{
-                                background: `radial-gradient(circle, ${c} 0%, ${c}44 50%, transparent 100%)`,
-                                boxShadow: `0 0 12px ${c}88, 0 0 24px ${c}44`,
-                            }}
-                            transition={{ duration: 0.5 }}
-                        />
-                        {/* Lens ring reflection */}
-                        <div
-                            className="absolute inset-0 rounded-full"
-                            style={{
-                                background: "linear-gradient(135deg, #ffffff15 0%, transparent 50%)",
-                            }}
-                        />
-                    </motion.div>
-
-                    {/* Status LED — right side */}
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                        <motion.div
-                            className="w-[5px] h-[5px] rounded-full"
-                            animate={{
-                                background: c,
-                                boxShadow: `0 0 6px ${c}`,
-                            }}
-                            transition={{ duration: 0.5 }}
-                        />
-                        <div className="w-[4px] h-[4px] rounded-full bg-[#ff3333]" style={{ boxShadow: "0 0 4px #ff3333" }} />
-                    </div>
-
-                    {/* Bottom edge detail */}
-                    <div className="absolute bottom-0 inset-x-0 h-[2px] bg-[#0a0a0e] rounded-b" />
-                </div>
-
-                {/* Table / stand surface */}
-                <div
-                    className="w-[130px] h-[6px] rounded-b-md"
+                {/* Projector PNG */}
+                <motion.img
+                    src={projectorImg}
+                    alt="Projector"
+                    className="w-[140px] md:w-[170px] lg:w-[190px] h-auto relative z-10 drop-shadow-2xl"
                     style={{
-                        background: "linear-gradient(180deg, #1a1a1e 0%, #111114 100%)",
-                        borderLeft: "1px solid #2a2a2e",
-                        borderRight: "1px solid #2a2a2e",
-                        borderBottom: "1px solid #2a2a2e",
+                        filter: `drop-shadow(0 6px 20px #00000088) drop-shadow(0 0 12px ${c}22)`,
+                    }}
+                    animate={{
+                        filter: `drop-shadow(0 6px 20px #00000088) drop-shadow(0 0 12px ${c}33)`,
+                    }}
+                    transition={{ duration: 0.6 }}
+                />
+
+                {/* Status LED overlay on the projector body */}
+                <motion.div
+                    aria-hidden
+                    className="absolute bottom-[38%] right-[18%] w-[5px] h-[5px] rounded-full z-20"
+                    animate={{
+                        background: c,
+                        boxShadow: `0 0 6px ${c}, 0 0 12px ${c}66`,
+                        opacity: [0.6, 1, 0.6],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                />
+
+                {/* Surface shadow beneath projector */}
+                <div
+                    className="w-[200px] md:w-[220px] h-[8px] rounded-[50%] blur-md -mt-1"
+                    style={{
+                        background: `radial-gradient(ellipse, ${c}30 0%, #00000044 40%, transparent 80%)`,
                     }}
                 />
             </div>
