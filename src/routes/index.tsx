@@ -222,7 +222,7 @@ const Hero = memo(function Hero() {
                                     letterSpacing: "0.05em",
                                     lineHeight: 1,
                                     paddingRight: "1em",
-                                    fontFamily: "'Ethnocentric', sans-serif",
+                                    fontFamily: "'Orbitron', sans-serif",
                                 }}
                             >
                                 VAMAHARSHA MAHADEVA వామహర్ష మహాదేవ वामहर्ष महादेव
