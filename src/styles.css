@@ -209,3 +209,33 @@
 body.nav-open {
     overflow: hidden;
 }
+
+/* ── Performance: skip rendering off-screen sections ── */
+/* content-visibility: auto tells the browser to skip layout/paint
+   for sections that are far below the viewport. contain-intrinsic-size
+   gives the browser an estimated height so scrollbar doesn't jump. */
+#about,
+#experience,
+#projects,
+#skills,
+#certificates,
+#contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
+}
+
+/* ── Ghost eye blink animation ── */
+.ghost-eye {
+    animation: ghost-blink 3s infinite ease-in-out;
+}
+
+@keyframes ghost-blink {
+    0%,
+    90%,
+    100% {
+        ry: 30;
+    }
+    95% {
+        ry: 3;
+    }
+}

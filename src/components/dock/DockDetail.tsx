@@ -52,6 +52,10 @@ export default function DockDetail({ item, onClose }: Props) {
                             <img
                                 src={item.icon}
                                 alt={item.name}
+                                loading="lazy"
+                                decoding="async"
+                                width={56}
+                                height={56}
                                 className="w-full h-full object-contain p-[20%] select-none pointer-events-none"
                             />
                         </div>

@@ -9,8 +9,13 @@
  *   5. Wall / screen with dashed border
  *   6. Certificate image projected onto the wall
  *   7. Scanline sweep overlay
+ *   8. Lens flare pulse
+ *   9. Film grain texture
+ *  10. Focus-pull blur transition
+ *  11. Projector hum indicator
  */
 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Internship } from "./InternshipData";
 import projectorImg from "@/assets/projector.png";
@@ -22,8 +27,16 @@ interface Props {
 export default function ProjectorScene({ active }: Props) {
     const c = active.color;
 
+    // Focus-pull: briefly blur the screen image on certificate switch
+    const [isFocusing, setIsFocusing] = useState(false);
+    useEffect(() => {
+        setIsFocusing(true);
+        const t = setTimeout(() => setIsFocusing(false), 400);
+        return () => clearTimeout(t);
+    }, [active.id]);
+
     return (
-        <div className="relative flex flex-col items-center justify-end w-full min-h-[520px] lg:min-h-[640px] select-none">
+        <div className="relative flex flex-col items-center justify-end w-full min-h-[340px] sm:min-h-[420px] lg:min-h-[640px] select-none">
             {/* ── Perspective floor grid ── */}
             <div
                 aria-hidden
@@ -59,7 +72,7 @@ export default function ProjectorScene({ active }: Props) {
 
             {/* ── REALISTIC PROJECTOR SCREEN ── */}
             <div
-                className="relative w-[82%] mx-auto"
+                className="relative w-[90%] sm:w-[85%] lg:w-[82%] mx-auto"
                 style={{
                     aspectRatio: "16 / 10",
                     marginBottom: "0",
@@ -123,9 +136,13 @@ export default function ProjectorScene({ active }: Props) {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={active.id}
-                            initial={{ opacity: 0, scale: 1.02 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.98 }}
+                            initial={{ opacity: 0, scale: 1.02, filter: "blur(6px)" }}
+                            animate={{
+                                opacity: 1,
+                                scale: 1,
+                                filter: isFocusing ? "blur(3px)" : "blur(0px)",
+                            }}
+                            exit={{ opacity: 0, scale: 0.98, filter: "blur(4px)" }}
                             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                             className="absolute inset-0 flex items-center justify-center p-[5%]"
                         >
@@ -133,6 +150,8 @@ export default function ProjectorScene({ active }: Props) {
                                 <img
                                     src={active.certificateImage}
                                     alt={`${active.company} certificate`}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-contain"
                                     style={{
                                         filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15))",
@@ -140,9 +159,9 @@ export default function ProjectorScene({ active }: Props) {
                                 />
                             ) : (
                                 /* Text-based fallback when no certificate image */
-                                <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center">
+                                <div className="w-full h-full flex flex-col items-center justify-center gap-2 sm:gap-3 text-center">
                                     <span
-                                        className="font-mono text-[10px] tracking-[0.3em] uppercase"
+                                        className="font-mono text-[8px] sm:text-[10px] tracking-[0.3em] uppercase"
                                         style={{ color: "#555550" }}
                                     >
                                         {active.company}
@@ -150,7 +169,7 @@ export default function ProjectorScene({ active }: Props) {
                                     <h4
                                         className="text-display text-[#2a2a28] uppercase"
                                         style={{
-                                            fontSize: "clamp(14px, 2.2vw, 28px)",
+                                            fontSize: "clamp(11px, 2.2vw, 28px)",
                                             letterSpacing: "-0.01em",
                                         }}
                                     >
@@ -160,13 +179,23 @@ export default function ProjectorScene({ active }: Props) {
                                         className="w-[60%] h-px mt-1 mb-1"
                                         style={{ background: "linear-gradient(90deg, transparent, #88888866, transparent)" }}
                                     />
-                                    <span className="font-mono text-[10px] text-[#777774]">
+                                    <span className="font-mono text-[8px] sm:text-[10px] text-[#777774]">
                                         {active.year} · {active.duration} · {active.mode}
                                     </span>
                                 </div>
                             )}
                         </motion.div>
                     </AnimatePresence>
+
+                    {/* Film grain overlay — ultra-subtle noise texture */}
+                    <div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none opacity-[0.025] mix-blend-overlay"
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+                            backgroundSize: "128px 128px",
+                        }}
+                    />
 
                     {/* Subtle warm color wash from projector light — very faint */}
                     <motion.div
@@ -199,16 +228,16 @@ export default function ProjectorScene({ active }: Props) {
 
                 {/* Bottom label bar */}
                 <div
-                    className="absolute -bottom-6 left-0 right-0 flex items-center justify-between font-mono text-[9px] tracking-[0.15em] uppercase px-1"
+                    className="absolute -bottom-5 sm:-bottom-6 left-0 right-0 flex items-center justify-between font-mono text-[7px] sm:text-[9px] tracking-[0.15em] uppercase px-1"
                     style={{ color: `${c}55` }}
                 >
                     <span>◆ R·E·C LIVE AT° {active.company}</span>
-                    <span>{active.credential}</span>
+                    <span className="hidden sm:inline">{active.credential}</span>
                 </div>
             </div>
 
             {/* ── LIGHT CONE — connects screen bottom to projector top ── */}
-            <div className="relative w-[82%] flex justify-center" style={{ height: "90px" }}>
+            <div className="relative w-[90%] sm:w-[85%] lg:w-[82%] flex justify-center" style={{ height: "clamp(50px, 10vw, 90px)" }}>
                 {/* Main light cone */}
                 <motion.div
                     aria-hidden
@@ -271,22 +300,36 @@ export default function ProjectorScene({ active }: Props) {
 
             {/* ── REAL PROJECTOR IMAGE ── */}
             <div className="relative z-10 flex flex-col items-center" style={{ marginTop: "-8px" }}>
-                {/* Lens glow — positioned at top-center of the projector (where the lens faces up) */}
+                {/* Lens flare — animated radial pulse at the projector lens */}
                 <motion.div
                     aria-hidden
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 rounded-[50%] blur-lg pointer-events-none z-20"
+                    className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 w-20 sm:w-24 h-8 sm:h-10 rounded-[50%] blur-xl pointer-events-none z-20"
                     animate={{
-                        background: `radial-gradient(ellipse, ${c}88 0%, ${c}44 40%, transparent 80%)`,
-                        boxShadow: `0 0 20px ${c}66`,
+                        background: `radial-gradient(ellipse, ${c}99 0%, ${c}44 35%, transparent 75%)`,
+                        boxShadow: `0 0 25px ${c}77, 0 0 50px ${c}33`,
+                        scale: [1, 1.15, 1],
+                        opacity: [0.7, 1, 0.7],
                     }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+
+                {/* Secondary lens flare — horizontal streak */}
+                <motion.div
+                    aria-hidden
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 h-[2px] rounded-full blur-[2px] pointer-events-none z-20"
+                    animate={{
+                        width: ["30px", "60px", "30px"],
+                        opacity: [0.3, 0.7, 0.3],
+                        background: c,
+                    }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                 />
 
                 {/* Projector PNG */}
                 <motion.img
                     src={projectorImg}
                     alt="Projector"
-                    className="w-[140px] md:w-[170px] lg:w-[190px] h-auto relative z-10 drop-shadow-2xl"
+                    className="w-[100px] sm:w-[140px] md:w-[170px] lg:w-[190px] h-auto relative z-10 drop-shadow-2xl"
                     style={{
                         filter: `drop-shadow(0 6px 20px #00000088) drop-shadow(0 0 12px ${c}22)`,
                     }}
@@ -308,9 +351,30 @@ export default function ProjectorScene({ active }: Props) {
                     transition={{ duration: 2, repeat: Infinity }}
                 />
 
+                {/* Projector hum waveform indicator — tiny animated bars next to LED */}
+                <div aria-hidden className="absolute bottom-[39%] right-[8%] flex items-end gap-[1.5px] z-20">
+                    {[0, 1, 2, 3].map((i) => (
+                        <motion.div
+                            key={i}
+                            className="rounded-full"
+                            style={{ width: "1.5px", background: c }}
+                            animate={{
+                                height: ["3px", `${4 + (i % 2) * 3}px`, "2px", `${5 - i}px`, "3px"],
+                                opacity: [0.4, 0.8, 0.3, 0.7, 0.4],
+                            }}
+                            transition={{
+                                duration: 1.2 + i * 0.15,
+                                repeat: Infinity,
+                                delay: i * 0.1,
+                                ease: "easeInOut",
+                            }}
+                        />
+                    ))}
+                </div>
+
                 {/* Surface shadow beneath projector */}
                 <div
-                    className="w-[200px] md:w-[220px] h-[8px] rounded-[50%] blur-md -mt-1"
+                    className="w-[140px] sm:w-[200px] md:w-[220px] h-[6px] sm:h-[8px] rounded-[50%] blur-md -mt-1"
                     style={{
                         background: `radial-gradient(ellipse, ${c}30 0%, #00000044 40%, transparent 80%)`,
                     }}

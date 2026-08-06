@@ -10,10 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.78",
+    "@tailwindcss/vite": "^4.3.1",
     "@tanstack/react-query": "^5.80.7",
     "@tanstack/react-router": "^1.121.0",
     "@tanstack/react-router-with-query": "^1.121.0",
-    "@tailwindcss/vite": "^4.3.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.41.0",
     "react": "^19.2.7",
@@ -30,6 +31,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "oxlint": "^1.69.0",
+    "sharp": "^0.35.3",
     "typescript": "~6.0.2",
     "vite": "^8.1.0"
   }

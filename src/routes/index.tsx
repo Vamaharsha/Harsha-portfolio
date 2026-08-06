@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, memo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Internships from "@/components/internships/Internships";
 import Experience from "@/components/experience/Experience";
 import Projects from "@/components/projects/Projects";
 import SkillsDock from "@/components/dock/SkillsDock";
 import portrait from "@/assets/portrait.png";
+import { MeshGradientSVG } from "@/components/ui/shader-svg";
 import certCharacter from "@/assets/cert-character.png";
 import cert_cs50 from "@/assets/CS50.png";
 import cert_nptel from "@/assets/nptel.png";
@@ -45,11 +47,12 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 /* ---------- NAV ---------- */
 
 const NAV_LINKS = [
-    ["Projects", "#projects"],
-    ["Experience", "#experience"],
-    ["Services", "#services"],
-    ["Certificates", "#certificates"],
     ["About", "#about"],
+    ["Projects", "#projects"],
+    ["Credentials", "#certificates"],
+    ["Internships", "#internships"],
+    ["Experience", "#experience"],
+    ["Tools", "#skills-dock"],
     ["Contact", "#contact"],
 ];
 
@@ -189,6 +192,10 @@ const Hero = memo(function Hero() {
                 <img
                     src={portrait}
                     alt="Vamaharsha Mahadeva"
+                    width={800}
+                    height={1200}
+                    fetchPriority="high"
+                    decoding="async"
                     className="h-[92vh] w-auto object-contain object-bottom select-none"
                     style={{ filter: "grayscale(100%) contrast(1.05)" }}
                 />
@@ -234,24 +241,26 @@ const Hero = memo(function Hero() {
 
             {/* bottom-left socials — hidden on very small screens */}
             <div className="absolute left-4 sm:left-8 bottom-16 sm:bottom-24 z-30 font-mono text-[11px] sm:text-[12px] space-y-1.5">
-                {[
-                    ["in", "Linkedin"],
-                    ["G", "Github"],
-                    ["ig", "Instagram"],
-                ].map(([k, l]) => (
-                    <a key={l} href="#" className="flex items-center gap-2 sm:gap-3 hover:text-[#ff3d2e] transition-colors">
-                        <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-[#0a0a0a]/30 text-[9px] sm:text-[10px]">{k}</span>
-                        <span className="hidden xs:inline">{l}</span>
-                    </a>
-                ))}
+                <a href="https://www.linkedin.com/in/vamaharsha-mahadeva/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 sm:gap-3 hover:text-[#ff3d2e] transition-colors">
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </span>
+                    <span className="hidden xs:inline">LinkedIn</span>
+                </a>
+                <a href="https://github.com/Vamaharsha" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 sm:gap-3 hover:text-[#ff3d2e] transition-colors">
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    </span>
+                    <span className="hidden xs:inline">GitHub</span>
+                </a>
             </div>
 
             {/* bottom-right title */}
             <div className="absolute right-4 sm:right-8 bottom-16 sm:bottom-24 z-30 text-right">
                 <p className="text-[20px] sm:text-[28px] md:text-[40px] leading-[1.05] font-medium">
                     <span className="text-[#ff3d2e] font-mono text-[14px] sm:text-[18px] align-top mr-1 sm:mr-2">//</span>
-                    Web Designer<br />
-                    Art Director
+                    AI & LLM Engineer<br />
+                    ECE Graduate
                 </p>
             </div>
 
@@ -267,9 +276,9 @@ const Hero = memo(function Hero() {
 
 function Stats() {
     const items = [
-        { v: "12+", l: "Projects shipped" },
-        { v: "03", l: "Research papers" },
-        { v: "02", l: "Internships" },
+        { v: "10+", l: "Projects built" },
+        { v: "01", l: "Publication" },
+        { v: "04", l: "Internships" },
         { v: "26'", l: "Graduating SVEC" },
     ];
     return (
@@ -296,7 +305,7 @@ const SERVICES = [
     "Full-Stack Web Development",
     "LLM Post-Training & Pipelines",
     "Embedded Systems & IoT",
-    "Computer Vision Research",
+    "RTL & Digital Design",
 ];
 
 function Services() {
@@ -360,21 +369,22 @@ function About() {
                     </h2>
                     <div className="mt-8 sm:mt-12 space-y-5 text-[14px] sm:text-[15px] leading-relaxed text-[#9a9a9a] max-w-xl">
                         <p>
-                            I'm Harsha — a final-year Electronics & Communication engineer at Sri Vasavi
-                            Engineering College, Vijayawada. My work lives in the overlap of signal processing,
-                            machine learning, and RF design.
+                            I'm Harsha — a 2026 Electronics & Communication graduate from Sri Vasavi
+                            Engineering College, Tadepalligudem. My work spans AI model evaluation,
+                            embedded systems, RTL design, RF simulation, and machine learning.
                         </p>
                         <p>
-                            I've shipped AI products end-to-end, designed substrate-integrated waveguide filters
-                            tuned with ANN, and worked on LLM post-training pipelines as an intern at Ethara AI.
+                            I've built ML-integrated platforms for RF filter optimization, designed
+                            substrate-integrated waveguide filters tuned with ANN, and worked on LLM
+                            post-training pipelines as an intern at Ethara AI.
                         </p>
                     </div>
                 </Reveal>
                 <div className="space-y-4 sm:space-y-6">
                     {[
-                        ["Based in", "Vijayawada, India"],
-                        ["Graduating", "2026"],
-                        ["Focus", "AI · RF · Web"],
+                        ["Based in", "Andhra Pradesh, India"],
+                        ["Graduating", "2026 · SVEC Tadepalligudem"],
+                        ["Focus", "AI · RF · Embedded"],
                         ["Status", "Open to roles"],
                     ].map(([k, v]) => (
                         <div key={k} className="flex justify-between py-3 sm:py-4 border-b border-[#1f1f1f]">
@@ -397,13 +407,20 @@ function Contact() {
     const SOCIALS = [
         { label: "LinkedIn", abbr: "in", href: "https://www.linkedin.com/in/vamaharsha-mahadeva/" },
         { label: "GitHub", abbr: "GH", href: "https://github.com/Vamaharsha" },
-        { label: "Instagram", abbr: "IG", href: "https://www.instagram.com/vamaharsha_mahadeva/" },
     ];
 
     return (
-        <section id="contact" className="relative bg-[#e8e6e1] text-[#0a0a0a] overflow-hidden">
+        <section id="contact" className="relative bg-[#0a0a0a] text-[#e8e6e1] overflow-hidden">
+            {/* Subtle ambient gradient behind */}
+            <div
+                className="absolute inset-0 pointer-events-none opacity-30"
+                style={{
+                    background: "radial-gradient(ellipse 60% 50% at 70% 50%, #4A90E220 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 30% 60%, #FFB3D910 0%, transparent 70%)",
+                }}
+            />
+
             {/* Section label bar */}
-            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-6 hairline-b-light">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 py-6 border-b border-white/5">
                 <span className="text-[#ff3d2e] font-mono text-[11px] tracking-[0.15em] uppercase">// Contact</span>
             </div>
 
@@ -435,7 +452,7 @@ function Contact() {
 
                         {/* Heading */}
                         <motion.h2
-                            className="text-display text-[#0a0a0a]"
+                            className="text-display text-[#e8e6e1]"
                             style={{
                                 fontSize: "clamp(36px, 5.5vw, 72px)",
                                 lineHeight: 1,
@@ -452,13 +469,13 @@ function Contact() {
 
                         {/* Description */}
                         <motion.p
-                            className="text-[15px] md:text-[16px] leading-relaxed text-[#555550] max-w-[520px]"
+                            className="text-[15px] md:text-[16px] leading-relaxed text-[#8a8a8a] max-w-[520px]"
                             initial={{ opacity: 0, y: 15 }}
                             animate={contactInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ delay: 0.4, duration: 0.6 }}
                         >
-                            I'm passionate about AI, full-stack development, and embedded systems.
-                            Whether you have a project idea, internship opportunity, or just want
+                            I'm passionate about AI, embedded systems, and VLSI design.
+                            Whether you have a project idea, job opportunity, or just want
                             to collaborate on something meaningful — I'd love to hear from you.
                         </motion.p>
 
@@ -471,54 +488,54 @@ function Contact() {
                         >
                             {/* Location */}
                             <div className="group flex items-start gap-3">
-                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
-                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-9 h-9 rounded-md border border-white/10 flex items-center justify-center shrink-0 bg-white/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-white/50 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Location</div>
-                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a]">Vijayawada, Andhra Pradesh</div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#666]">Location</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#e8e6e1]">Vijayawada, Andhra Pradesh</div>
                                 </div>
                             </div>
 
                             {/* Email */}
                             <a href="mailto:vamaharsha.m@gmail.com" className="group flex items-start gap-3">
-                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
-                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-9 h-9 rounded-md border border-white/10 flex items-center justify-center shrink-0 bg-white/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-white/50 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Email</div>
-                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] group-hover:text-[#ff3d2e] transition-colors">vamaharsha.m@gmail.com</div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#666]">Email</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#e8e6e1] group-hover:text-[#ff3d2e] transition-colors">vamaharsha.m@gmail.com</div>
                                 </div>
                             </a>
 
                             {/* Phone */}
                             <a href="tel:+919392849219" className="group flex items-start gap-3">
-                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
-                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-9 h-9 rounded-md border border-white/10 flex items-center justify-center shrink-0 bg-white/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-white/50 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Phone</div>
-                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] group-hover:text-[#ff3d2e] transition-colors">+91 93928 49219</div>
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#666]">Phone</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#e8e6e1] group-hover:text-[#ff3d2e] transition-colors">+91 93928 49219</div>
                                 </div>
                             </a>
 
                             {/* Availability */}
                             <div className="group flex items-start gap-3">
-                                <div className="w-9 h-9 rounded-md border border-[#0a0a0a]/10 flex items-center justify-center shrink-0 bg-[#0a0a0a]/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
-                                    <svg className="w-4 h-4 text-[#0a0a0a]/60 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-9 h-9 rounded-md border border-white/10 flex items-center justify-center shrink-0 bg-white/[0.03] group-hover:border-[#ff3d2e]/40 group-hover:bg-[#ff3d2e]/[0.05] transition-all duration-300">
+                                    <svg className="w-4 h-4 text-white/50 group-hover:text-[#ff3d2e] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#999]">Availability</div>
-                                    <div className="mt-1 text-[13px] font-medium text-[#0a0a0a] flex items-center gap-2">
+                                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#666]">Availability</div>
+                                    <div className="mt-1 text-[13px] font-medium text-[#e8e6e1] flex items-center gap-2">
                                         Open to Opportunities
                                         <span className="relative flex h-2 w-2">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
@@ -542,10 +559,14 @@ function Contact() {
                                     href={s.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group flex items-center gap-2.5 px-4 py-2.5 border border-[#0a0a0a]/10 rounded-md font-mono text-[11px] tracking-[0.1em] text-[#0a0a0a]/70 hover:border-[#ff3d2e] hover:text-[#ff3d2e] hover:bg-[#ff3d2e]/[0.04] transition-all duration-300"
+                                    className="group flex items-center gap-2.5 px-4 py-2.5 border border-white/10 rounded-md font-mono text-[11px] tracking-[0.1em] text-white/60 hover:border-[#ff3d2e] hover:text-[#ff3d2e] hover:bg-[#ff3d2e]/[0.04] transition-all duration-300"
                                 >
-                                    <span className="w-5 h-5 flex items-center justify-center border border-current/30 rounded-sm text-[9px] font-bold group-hover:border-current transition-colors">
-                                        {s.abbr}
+                                    <span className="w-5 h-5 flex items-center justify-center">
+                                        {s.label === "LinkedIn" ? (
+                                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                        ) : (
+                                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                                        )}
                                     </span>
                                     {s.label}
                                 </a>
@@ -555,7 +576,7 @@ function Contact() {
                         {/* CTA Button */}
                         <motion.a
                             href="mailto:vamaharsha.m@gmail.com"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-[#0a0a0a] text-[#e8e6e1] font-mono text-[11px] tracking-[0.25em] uppercase rounded-sm hover:bg-[#ff3d2e] transition-all duration-400 group"
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-[#e8e6e1] text-[#0a0a0a] font-mono text-[11px] tracking-[0.25em] uppercase rounded-sm hover:bg-[#ff3d2e] hover:text-white transition-all duration-400 group"
                             initial={{ opacity: 0, y: 10 }}
                             animate={contactInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ delay: 0.7, duration: 0.5 }}
@@ -569,58 +590,30 @@ function Contact() {
                         </motion.a>
                     </div>
 
-                    {/* ── RIGHT COLUMN — Portrait ── */}
+                    {/* ── RIGHT COLUMN — Ghost Character ── */}
                     <motion.div
-                        className="relative flex items-center justify-center"
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        className="relative flex flex-col items-center justify-center text-white py-4"
+                        initial={{ opacity: 0, scale: 0.9 }}
                         animate={contactInView ? { opacity: 1, scale: 1 } : {}}
                         transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        {/* Accent frame behind portrait */}
+                        {/* Glow behind ghost */}
                         <div
-                            className="absolute inset-4 md:inset-6 rounded-sm pointer-events-none"
+                            className="absolute inset-0 pointer-events-none"
                             style={{
-                                border: "1.5px solid #ff3d2e22",
-                                transform: "rotate(2deg)",
-                            }}
-                        />
-                        <div
-                            className="absolute inset-4 md:inset-6 rounded-sm pointer-events-none"
-                            style={{
-                                border: "1.5px solid #0a0a0a10",
-                                transform: "rotate(-1.5deg)",
+                                background: "radial-gradient(circle at 50% 45%, rgba(74, 144, 226, 0.25) 0%, rgba(135, 206, 235, 0.12) 35%, transparent 70%)",
+                                filter: "blur(40px)",
                             }}
                         />
 
-                        {/* Portrait container */}
-                        <div className="relative w-full max-w-[480px] aspect-[3/4] overflow-hidden rounded-sm">
-                            <img
-                                src={portrait}
-                                alt="Vamaharsha Mahadeva"
-                                className="w-full h-full object-cover object-top select-none"
-                                style={{ filter: "grayscale(100%) contrast(1.08)" }}
-                            />
+                        {/* Interactive Ghost SVG */}
+                        <MeshGradientSVG className="relative z-10" />
 
-                            {/* Subtle gradient overlay at bottom */}
-                            <div
-                                className="absolute inset-0 pointer-events-none"
-                                style={{
-                                    background: "linear-gradient(180deg, transparent 50%, #e8e6e140 85%, #e8e6e1 100%)",
-                                }}
-                            />
-
-                            {/* Corner accents */}
-                            <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-[#ff3d2e] opacity-60" />
-                            <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-[#ff3d2e] opacity-60" />
-                            <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-[#ff3d2e] opacity-60" />
-                            <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-[#ff3d2e] opacity-60" />
-
-                            {/* Name overlay at bottom */}
-                            <div className="absolute bottom-6 left-0 right-0 text-center z-10">
-                                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#0a0a0a]/60">
-                                    Vamaharsha Mahadeva
-                                </span>
-                            </div>
+                        {/* Name caption below ghost */}
+                        <div className="mt-4 text-center z-10">
+                            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/40">
+                                Vamaharsha Mahadeva
+                            </span>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -629,7 +622,7 @@ function Contact() {
                 <div className="flex justify-end mt-12">
                     <a
                         href="#top"
-                        className="w-11 h-11 rounded-full border border-[#0a0a0a]/20 flex items-center justify-center hover:bg-[#0a0a0a] hover:text-[#e8e6e1] hover:border-[#0a0a0a] transition-all duration-300 text-[14px]"
+                        className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white hover:text-[#0a0a0a] hover:border-white transition-all duration-300 text-[14px] text-white/50"
                         aria-label="Back to top"
                     >
                         ↑
@@ -638,7 +631,7 @@ function Contact() {
             </div>
 
             {/* Footer */}
-            <footer className="bg-[#0a0a0a] text-[#6b6b6b] py-4 px-5 sm:px-8 flex flex-col sm:flex-row items-center sm:justify-between gap-1 font-mono text-[10px] sm:text-[11px] text-center sm:text-left">
+            <footer className="bg-[#050505] text-[#6b6b6b] py-4 px-5 sm:px-8 flex flex-col sm:flex-row items-center sm:justify-between gap-1 font-mono text-[10px] sm:text-[11px] text-center sm:text-left">
                 <span>© 2026 Vamaharsha Mahadeva</span>
                 <span>Built with care · TanStack + Motion</span>
             </footer>
@@ -924,8 +917,18 @@ export const CertificateCard = ({ cert }: { cert: typeof CERTS[0] }) => {
 
 function Certificates() {
     const [active, setActive] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const cert = CERTS[active];
     const c = cert.color;
+
+    // ESC key to close modal
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setIsModalOpen(false);
+        };
+        if (isModalOpen) window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isModalOpen]);
 
     return (
         <section
@@ -1052,17 +1055,11 @@ function Certificates() {
                             </div>
 
                             <button
-                                onClick={() => {
-                                    if (cert.credentialLink) {
-                                        window.open(cert.credentialLink, "_blank", "noopener,noreferrer");
-                                    } else {
-                                        window.open(cert.image, "_blank", "noopener,noreferrer");
-                                    }
-                                }}
+                                onClick={() => setIsModalOpen(true)}
                                 className="block w-full text-center border px-5 py-4 font-mono text-[10px] tracking-[0.25em] uppercase transition-all cursor-pointer"
                                 style={{ borderColor: c, color: c, background: "transparent" }}
                             >
-                                Verify Certificate →
+                                View Certificate ↗
                             </button>
                         </motion.div>
                     </AnimatePresence>
@@ -1078,15 +1075,41 @@ function Certificates() {
                                 <li key={ct.id}>
                                     <button
                                         onClick={() => setActive(i)}
-                                        className="w-full text-left rounded-md border px-5 py-4 flex items-start gap-5 transition-all duration-300"
+                                        className="relative w-full text-left rounded-md border px-5 py-4 flex items-start gap-5 transition-all duration-300 overflow-hidden group"
                                         style={{
                                             borderColor: isActive ? ct.color : "#1c1c1c",
                                             background: isActive
                                                 ? `linear-gradient(180deg, ${ct.color}10, transparent)`
                                                 : "transparent",
-                                            boxShadow: isActive ? `0 0 0 1px ${ct.color}55, 0 8px 40px -10px ${ct.color}55` : "none",
+                                            boxShadow: isActive
+                                                ? `0 0 0 1px ${ct.color}55, 0 8px 40px -10px ${ct.color}55`
+                                                : "none",
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isActive) {
+                                                e.currentTarget.style.borderColor = `${ct.color}55`;
+                                                e.currentTarget.style.boxShadow = `0 0 20px ${ct.color}15`;
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isActive) {
+                                                e.currentTarget.style.borderColor = "#1c1c1c";
+                                                e.currentTarget.style.boxShadow = "none";
+                                            }
                                         }}
                                     >
+                                        {/* Animated active indicator bar */}
+                                        <motion.div
+                                            className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full"
+                                            initial={false}
+                                            animate={{
+                                                scaleY: isActive ? 1 : 0,
+                                                opacity: isActive ? 1 : 0,
+                                                background: ct.color,
+                                                boxShadow: isActive ? `0 0 8px ${ct.color}88` : `0 0 0px transparent`,
+                                            }}
+                                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                                        />
                                         <span
                                             className="font-mono text-[11px] tabular-nums pt-1 shrink-0"
                                             style={{ color: isActive ? ct.color : "#5a5a5a" }}
@@ -1095,13 +1118,13 @@ function Certificates() {
                                         </span>
                                         <span className="min-w-0">
                                             <span
-                                                className="block text-[16px] font-semibold leading-tight"
+                                                className="block text-[16px] font-semibold leading-tight transition-colors duration-300"
                                                 style={{ color: isActive ? "#fff" : "#7a7a7a" }}
                                             >
                                                 {ct.name}
                                             </span>
                                             <span
-                                                className="block mt-2 font-mono text-[10px] tracking-[0.18em] uppercase"
+                                                className="block mt-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors duration-300"
                                                 style={{ color: isActive ? ct.color : "#3f3f3f" }}
                                             >
                                                 {ct.category}
@@ -1180,6 +1203,7 @@ function Certificates() {
                                     src={certCharacter}
                                     alt="Harsha holding a certificate"
                                     loading="lazy"
+                                    decoding="async"
                                     width={1024}
                                     height={1536}
                                     className="relative z-10 w-full h-full object-contain select-none pointer-events-none"
@@ -1243,13 +1267,7 @@ function Certificates() {
                                 </div>
 
                                 <button
-                                    onClick={() => {
-                                        if (cert.credentialLink) {
-                                            window.open(cert.credentialLink, "_blank", "noopener,noreferrer");
-                                        } else {
-                                            window.open(cert.image, "_blank", "noopener,noreferrer");
-                                        }
-                                    }}
+                                    onClick={() => setIsModalOpen(true)}
                                     className="group block w-full text-center border px-6 py-5 font-mono text-[11px] tracking-[0.28em] uppercase transition-all cursor-pointer"
                                     style={{
                                         borderColor: c,
@@ -1264,14 +1282,112 @@ function Certificates() {
                                         (e.currentTarget as HTMLButtonElement).style.background = "transparent";
                                     }}
                                 >
-                                    Verify Certificate
-                                    <span className="block mt-1">→</span>
+                                    View Certificate
+                                    <span className="block mt-1">↗</span>
                                 </button>
                             </motion.div>
                         </AnimatePresence>
                     </div>
                 </div>
             </div>
+
+            {/* ── Certificate Viewer Modal (portaled to body to escape stacking context) ── */}
+            {typeof document !== "undefined" && createPortal(
+                <AnimatePresence>
+                    {isModalOpen && (
+                        <motion.div
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black/90 cursor-pointer"
+                                onClick={() => setIsModalOpen(false)}
+                            />
+
+                            {/* Modal */}
+                            <motion.div
+                                className="relative w-full max-w-[900px] rounded-lg overflow-hidden border border-[#2f2f35] bg-[#0c0d10] flex flex-col p-4 md:p-6"
+                                style={{ boxShadow: `0 0 40px ${c}25, inset 0 0 30px rgba(255, 255, 255, 0.02)` }}
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.9, y: 20 }}
+                                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            >
+                                {/* Glowing corner borders */}
+                                <div className="absolute top-2 left-2 w-4 h-4 border-t border-l" style={{ borderColor: c }} />
+                                <div className="absolute top-2 right-2 w-4 h-4 border-t border-r" style={{ borderColor: c }} />
+                                <div className="absolute bottom-2 left-2 w-4 h-4 border-b border-l" style={{ borderColor: c }} />
+                                <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r" style={{ borderColor: c }} />
+
+                                {/* Header */}
+                                <div className="w-full flex items-center justify-between mb-4 border-b border-white/5 pb-3">
+                                    <div>
+                                        <span className="font-mono text-[9px] tracking-[0.2em] uppercase" style={{ color: c }}>
+                                            {cert.category}
+                                        </span>
+                                        <h4 className="text-display text-[14px] md:text-[20px] text-white tracking-wide uppercase mt-1">
+                                            {cert.name}
+                                        </h4>
+                                        <span className="font-mono text-[9px] text-[#6a6a6f] mt-0.5 block">
+                                            Issued by {cert.issuer} — {cert.date}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="p-2 border rounded-full transition-all duration-300 hover:scale-110 cursor-pointer shrink-0"
+                                        style={{ borderColor: `${c}33`, color: c, background: "rgba(255, 255, 255, 0.02)" }}
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {/* Certificate Image */}
+                                <div className="relative flex-1 w-full overflow-hidden rounded-md border border-[#1f1f23] bg-[#050507] flex items-center justify-center p-2 min-h-[220px] md:min-h-[450px]">
+                                    <AnimatePresence mode="wait">
+                                        <motion.img
+                                            key={cert.id}
+                                            src={cert.image}
+                                            alt={`${cert.name} Certificate`}
+                                            className="max-w-full max-h-[65vh] object-contain"
+                                            style={{ filter: `drop-shadow(0 0 15px ${c}22)` }}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.95 }}
+                                            transition={{ duration: 0.4 }}
+                                        />
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="w-full flex justify-between items-center mt-3 font-mono text-[9px] text-[#5a5a5f]">
+                                    <span className="truncate">Credential: {cert.credential}</span>
+                                    <div className="flex items-center gap-4 shrink-0">
+                                        {cert.credentialLink && (
+                                            <a
+                                                href={cert.credentialLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="transition-colors duration-200 hover:underline"
+                                                style={{ color: c }}
+                                            >
+                                                Open Original ↗
+                                            </a>
+                                        )}
+                                        <span className="hidden sm:block">Press ESC to close</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </section>
     );
 }
@@ -1300,13 +1416,12 @@ function Home() {
             <Nav theme={theme} />
             <Hero />
             <Stats />
-            <Services />
+            <About />
             <Projects />
             <Certificates />
             <Internships />
             <Experience />
             <SkillsDock />
-            <About />
             <Contact />
         </main>
     );

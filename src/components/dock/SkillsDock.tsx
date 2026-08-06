@@ -116,6 +116,10 @@ function DockIcon({
                 <img
                     src={item.icon}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
+                    width={64}
+                    height={64}
                     className="absolute inset-0 w-full h-full object-contain p-[20%] pointer-events-none select-none"
                     draggable={false}
                     style={{

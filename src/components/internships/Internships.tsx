@@ -104,7 +104,7 @@ export default function Internships() {
                     </h2>
 
                     {/* Horizontal scrollable pill tabs */}
-                    <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 mb-8 -mx-1 px-1">
+                    <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 mb-6 -mx-1 px-1">
                         {INTERNSHIPS.map((intern, i) => {
                             const isActive = i === activeIndex;
                             return (
@@ -127,6 +127,11 @@ export default function Internships() {
                                 </button>
                             );
                         })}
+                    </div>
+
+                    {/* Mobile Projector Scene — compact version */}
+                    <div className="w-[92%] mx-auto mb-6">
+                        <ProjectorScene active={active} />
                     </div>
 
                     {/* Details card */}
