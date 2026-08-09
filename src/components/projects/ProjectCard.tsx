@@ -6,7 +6,7 @@
 
 import { motion } from "framer-motion";
 import type { Project } from "./ProjectData";
-import { GlowCard } from "@/components/ui/spotlight-card";
+import { GlowCard } from "../ui/spotlight-card";
 
 interface Props {
     project: Project;
