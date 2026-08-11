@@ -34,13 +34,21 @@ export function MeshGradientSVG({ className = "" }: { className?: string }) {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height * 0.42;
 
-        const deltaX = (mousePosition.x - centerX) * 0.08;
-        const deltaY = (mousePosition.y - centerY) * 0.08;
+        const dx = mousePosition.x - centerX;
+        const dy = mousePosition.y - centerY;
 
-        const maxOffset = 8;
+        // Use atan2 for angle-based tracking — eyes follow cursor
+        // direction regardless of distance across the entire page
+        const angle = Math.atan2(dy, dx);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Smoothly ramp up to maxOffset — reaches full offset at ~200px distance
+        const maxOffset = 14;
+        const strength = Math.min(1, distance / 200);
+
         setEyeOffset({
-            x: Math.max(-maxOffset, Math.min(maxOffset, deltaX)),
-            y: Math.max(-maxOffset, Math.min(maxOffset, deltaY)),
+            x: Math.cos(angle) * maxOffset * strength,
+            y: Math.sin(angle) * maxOffset * strength,
         });
     }, [mousePosition]);
 
@@ -59,9 +67,10 @@ export function MeshGradientSVG({ className = "" }: { className?: string }) {
             }}
             style={{
                 transformOrigin: "top center",
-                /* Fixed size matching the SVG path coordinate space */
+                /* Base size matching the SVG path coordinate space, scaled up with transform */
                 width: "231px",
                 height: "289px",
+                transform: "scale(1.4)",
             }}
         >
             {/*
@@ -131,3 +140,4 @@ export function MeshGradientSVG({ className = "" }: { className?: string }) {
         </motion.div>
     );
 }
+
