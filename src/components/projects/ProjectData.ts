@@ -98,8 +98,8 @@ export const PROJECTS: Project[] = [
         category: "Web Dev",
         year: "2025",
         description:
-            "Python full-stack web application for alumni interaction and institutional data management, built with Django backend and JavaScript-powered frontend.",
-        techStack: ["Django", "JavaScript", "Python"],
+            "Python full-stack web application for alumni interaction and institutional data management, built with Flask backend and JavaScript-powered frontend.",
+        techStack: ["Flask", "JavaScript", "Python"],
         githubUrl: "https://github.com/Vamaharsha/memorialbookflask",
         color: CATEGORY_COLORS["Web Dev"],
     },
